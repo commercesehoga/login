@@ -1,489 +1,496 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>⚡ ThunderStudy | Login</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Outfit:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <style>
     :root {
-      --text: #1e293b;
-      --text-muted: #64748b;
-      --text-sub: #94a3b8;
-      --primary: #6366f1;
-      --primary-h: #4f46e5;
-      --purple: #a855f7;
-      --green: #10b981;
-      --red: #f43f5e;
-      --yellow: #f59e0b;
-      --fn: 'Plus Jakarta Sans', sans-serif;
-      --hfn: 'Outfit', sans-serif;
-      --mono: 'DM Mono', monospace;
-      --card-bg: rgba(255,255,255,0.72);
-      --card-border: rgba(255,255,255,0.9);
-      --input-bg: rgba(241,245,249,0.8);
-      --input-border: rgba(203,213,225,0.7);
-      --input-focus: #6366f1;
+      --primary:#4648d4; --primary-c:#6063ee; --tertiary:#006c49; --tertiary-f:#6ffbbe;
+      --surface:#f9f9ff; --surface-c:#e7eeff; --surface-ch:#dee8ff;
+      --on-surface:#111c2d; --on-surface-v:#464554; --outline-v:#c7c4d7;
+      --error:#ba1a1a;
+      --fn:'Plus Jakarta Sans',sans-serif; --hfn:'Outfit',sans-serif; --mono:'DM Mono',monospace;
     }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    /* ── SKY BACKGROUND ── */
-    body {
-      min-height: 100vh;
-      font-family: var(--fn);
-      color: var(--text);
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      padding: 20px;
-      position: relative;
-      overflow-x: hidden;
-      overflow-y: auto;
-      background: linear-gradient(180deg,
-        #b8dff0 0%,
-        #cce8f5 18%,
-        #ddf0f9 35%,
-        #eef7fc 55%,
-        #f5fbfe 70%,
-        #ffffff 85%,
-        #f0f8ff 100%
-      );
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{
+      min-height:100vh;font-family:var(--fn);color:var(--on-surface);
+      background:linear-gradient(180deg,#f0f3ff 0%,#ffffff 100%);
+      overflow-x:hidden;overflow-y:auto;position:relative;
     }
 
-    /* Animated sun glow top-right */
-    .sun {
-      position: fixed;
-      top: -120px; right: -80px;
-      width: 420px; height: 420px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(255,220,100,.55) 0%, rgba(255,200,60,.2) 40%, transparent 70%);
-      pointer-events: none; z-index: 0;
-      animation: sunPulse 6s ease-in-out infinite alternate;
-    }
-    @keyframes sunPulse {
-      0%   { opacity: .8; transform: scale(1); }
-      100% { opacity: 1; transform: scale(1.08); }
+    /* ─── ATMOSPHERIC ─── */
+    .atmo{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+    .atmo-blob1{position:absolute;top:5%;left:2%;width:320px;height:320px;background:rgba(193,233,250,.25);border-radius:50%;filter:blur(60px);}
+    .atmo-blob2{position:absolute;top:15%;right:-5%;width:480px;height:480px;background:rgba(96,99,238,.08);border-radius:50%;filter:blur(80px);}
+    .atmo-sun{position:absolute;top:10px;right:20px;color:rgba(251,191,36,.4);font-size:100px;}
+    .cloud-anim{animation:cloudFloat 20s linear infinite;}
+    .cloud-anim2{animation:cloudFloat 30s linear infinite;animation-delay:-12s;}
+    @keyframes cloudFloat{from{transform:translateX(-150px);}to{transform:translateX(calc(100vw + 150px));}}
+
+    /* ─── TOPNAV ─── */
+    .topnav{position:fixed;top:16px;left:16px;right:16px;border-radius:16px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.65);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 20px 40px rgba(99,102,241,.12);z-index:50;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;}
+    .topnav-brand{display:flex;align-items:center;gap:6px;text-decoration:none;}
+    .topnav-brand-icon{font-size:26px;color:var(--primary);}
+    .topnav-brand-name{font-family:var(--hfn);font-size:20px;font-weight:800;color:var(--primary);letter-spacing:-.5px;}
+    .topnav-links{display:none;gap:24px;align-items:center;}
+    @media(min-width:768px){.topnav-links{display:flex;}}
+    .topnav-link{font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:.05em;color:var(--on-surface-v);text-decoration:none;transition:color .2s,transform .15s;}
+    .topnav-link.active{color:var(--primary);}
+    .topnav-link:hover{color:var(--primary);transform:scale(1.05);}
+
+    /* ─── LAYOUT ─── */
+    .page-wrap{position:relative;z-index:10;min-height:100vh;padding:104px 16px 80px;display:flex;align-items:flex-start;justify-content:center;}
+    @media(min-width:768px){.page-wrap{padding:104px 48px 80px;align-items:center;}}
+
+    /* MOBILE: single column */
+    .login-layout{width:100%;max-width:460px;}
+    /* DESKTOP: two column */
+    @media(min-width:900px){
+      .login-layout{max-width:960px;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;}
+      .login-layout-left{order:1;}
+      .login-layout-right{order:2;}
+      .login-layout-full{grid-column:1/-1;}
     }
 
-    /* Cloud layer */
-    .clouds { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
-    .cloud {
-      position: absolute;
-      background: rgba(255,255,255,0.88);
-      border-radius: 50px;
-      filter: blur(2px);
-    }
-    .cloud::before, .cloud::after {
-      content: ''; position: absolute;
-      background: inherit; border-radius: 50%;
-    }
-    .c1 { width:280px; height:70px; bottom:12%; left:-60px; animation: cloudDrift 28s linear infinite; opacity:.9; }
-    .c1::before { width:120px; height:100px; top:-50px; left:40px; }
-    .c1::after  { width:90px;  height:80px;  top:-40px; left:120px; }
+    /* ─── GLASS CARD ─── */
+    .glass-card{background:rgba(255,255,255,.65);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.4);border-radius:24px;box-shadow:0 8px 32px rgba(70,72,212,.08),0 2px 8px rgba(0,0,0,.04);}
+    .glass-card-inner{background:rgba(255,255,255,.5);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.35);border-radius:20px;box-shadow:0 4px 16px rgba(70,72,212,.06);}
 
-    .c2 { width:220px; height:55px; bottom:18%; left:-30px; animation: cloudDrift 22s 4s linear infinite; opacity:.75; }
-    .c2::before { width:100px; height:85px; top:-45px; left:30px; }
-    .c2::after  { width:75px;  height:65px;  top:-35px; left:100px; }
+    /* ─── HERO LEFT (desktop only) ─── */
+    .hero-left{display:none;}
+    @media(min-width:900px){
+      .hero-left{display:flex;flex-direction:column;justify-content:center;gap:20px;padding:8px 0;}
+    }
+    .hero-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:999px;background:var(--tertiary-f);color:#002113;font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;width:fit-content;}
+    .hero-title{font-family:var(--hfn);font-size:44px;font-weight:800;letter-spacing:-.03em;color:var(--on-surface);line-height:1.15;}
+    .hero-title span{color:var(--primary);}
+    .hero-subtitle{font-size:15px;color:var(--on-surface-v);line-height:1.7;max-width:360px;}
+    .hero-features{display:flex;flex-direction:column;gap:10px;margin-top:8px;}
+    .hero-feat{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--on-surface-v);}
+    .hero-feat-icon{width:32px;height:32px;border-radius:10px;background:rgba(70,72,212,.1);display:flex;align-items:center;justify-content:center;color:var(--primary);font-size:18px;flex-shrink:0;}
 
-    .c3 { width:340px; height:80px; bottom:6%; left:-80px; animation: cloudDrift 35s 8s linear infinite; opacity:.95; }
-    .c3::before { width:140px; height:110px; top:-58px; left:50px; }
-    .c3::after  { width:110px; height:90px;  top:-45px; left:150px; }
+    /* ─── STEP CARD (right / mobile full) ─── */
+    .step-card{padding:28px 28px 24px;}
+    @media(max-width:899px){.step-card{padding:20px 18px 18px;}}
 
-    .c4 { width:180px; height:48px; bottom:30%; right:-50px; animation: cloudDriftR 26s 2s linear infinite; opacity:.7; }
-    .c4::before { width:85px; height:70px; top:-38px; left:25px; }
-    .c4::after  { width:60px; height:55px; top:-30px; left:85px; }
+    /* ─── HEADER ─── */
+    .card-header{text-align:center;margin-bottom:20px;}
+    .logo-wrap{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.95);border:1.5px solid var(--outline-v);box-shadow:0 6px 20px rgba(100,116,139,.12);display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px;animation:floatLogo 3s ease-in-out infinite alternate;}
+    @keyframes floatLogo{0%{transform:translateY(0);}100%{transform:translateY(-5px);}}
+    .logo-inner{width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,#4f46e5,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;box-shadow:0 4px 14px rgba(99,102,241,.4);}
+    .card-title{font-family:var(--hfn);font-size:22px;font-weight:800;letter-spacing:-.4px;color:var(--on-surface);margin-bottom:5px;}
+    .card-title span{background:linear-gradient(90deg,#6366f1,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .card-sub{font-size:13px;color:var(--on-surface-v);max-width:280px;margin:0 auto;line-height:1.55;}
 
-    .c5 { width:260px; height:65px; bottom:40%; right:-60px; animation: cloudDriftR 32s 10s linear infinite; opacity:.6; }
-    .c5::before { width:110px; height:90px; top:-48px; left:35px; }
-    .c5::after  { width:85px;  height:70px; top:-38px; left:120px; }
+    /* ─── STEP DOTS ─── */
+    .step-bar{display:flex;gap:6px;justify-content:center;margin-bottom:18px;}
+    .step-dot{width:6px;height:6px;border-radius:50%;background:rgba(70,72,212,.18);transition:all .35s cubic-bezier(.34,1.56,.64,1);}
+    .step-dot.active{background:var(--primary);width:28px;border-radius:3px;}
+    .step-dot.done{background:var(--tertiary);width:10px;}
 
-    @keyframes cloudDrift  { from { transform: translateX(0) } to { transform: translateX(110vw) } }
-    @keyframes cloudDriftR { from { transform: translateX(0) } to { transform: translateX(-110vw) } }
+    /* ─── PANELS ─── */
+    .step-panel{display:none;animation:panelIn .35s ease both;}
+    .step-panel.active{display:block;}
+    @keyframes panelIn{from{opacity:0;transform:translateX(14px);}to{opacity:1;transform:translateX(0);}}
 
-    /* Decorative arc ring behind card */
-    .arc-ring {
-      position: fixed;
-      width: 800px; height: 800px;
-      border-radius: 50%;
-      border: 1.5px solid rgba(99,102,241,.09);
-      top: 50%; left: 50%;
-      transform: translate(-50%, -45%);
-      pointer-events: none; z-index: 0;
+    /* ─── RETURNING PROFILE BANNER ─── */
+    .profile-banner{background:linear-gradient(135deg,rgba(70,72,212,.07),rgba(168,85,247,.04));border:1.5px solid rgba(70,72,212,.16);border-radius:18px;padding:16px;margin-bottom:16px;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden;}
+    .profile-banner::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(70,72,212,.35),transparent);}
+    .profile-avatar{width:50px;height:50px;border-radius:15px;flex-shrink:0;background:linear-gradient(135deg,#4648d4,#a855f7);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;font-family:var(--hfn);color:#fff;box-shadow:0 4px 14px rgba(70,72,212,.3);overflow:hidden;}
+    .profile-name{font-size:16px;font-weight:800;color:var(--on-surface);letter-spacing:-.3px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .profile-meta{font-size:11px;color:var(--on-surface-v);font-family:var(--mono);}
+    .profile-badge{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;padding:3px 8px;border-radius:6px;margin-top:5px;display:inline-block;background:rgba(16,185,129,.1);color:#059669;border:1px solid rgba(16,185,129,.2);}
+    .local-done-notice{background:linear-gradient(135deg,rgba(16,185,129,.07),rgba(16,185,129,.03));border:1.5px solid rgba(16,185,129,.22);border-radius:14px;padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;gap:12px;}
+    .local-done-check{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;box-shadow:0 3px 10px rgba(16,185,129,.3);}
+    .local-done-text{font-size:12px;line-height:1.5;color:#475569;}
+    .local-done-text b{color:var(--on-surface);font-size:13px;display:block;margin-bottom:2px;}
+
+    /* ─── STATS ROW (returning) ─── */
+    .stats-row{display:flex;gap:8px;margin:14px 0;}
+    .stat-pill{flex:1;background:rgba(255,255,255,.6);border:1px solid rgba(203,213,225,.45);border-radius:14px;padding:10px 8px;text-align:center;}
+    .stat-val{font-size:15px;font-weight:900;font-family:var(--mono);}
+    .stat-val.hp{color:var(--error);}
+    .stat-val.xp{color:var(--primary);}
+    .stat-val.rp{color:#d97706;}
+    .stat-label{font-size:9px;color:var(--on-surface-v);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-top:3px;}
+
+    /* ─── MINIMAL FROSTED 3D ID CARD ─── */
+    .card-scene{perspective:1100px;width:100%;height:210px;cursor:pointer;margin:0 auto 4px;}
+    .id-card{width:100%;height:210px;position:relative;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.25,.46,.45,.94);border-radius:20px;}
+    .id-card.flipped{transform:rotateY(180deg);}
+    .card-face{position:absolute;inset:0;border-radius:20px;backface-visibility:hidden;overflow:hidden;}
+
+    /* FRONT — light frosted */
+    .card-front{background:rgba(255,255,255,.92);border:1px solid rgba(180,196,240,.7);box-shadow:0 12px 40px rgba(70,72,212,.13),0 2px 6px rgba(0,0,0,.06),inset 0 1px 0 rgba(255,255,255,.95);}
+    .card-front::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#4648d4,#7c3aed,#a855f7);}
+    .card-content{position:relative;z-index:1;padding:16px 18px;height:100%;display:flex;flex-direction:column;justify-content:space-between;}
+    .card-top{display:flex;align-items:flex-start;justify-content:space-between;}
+    .card-logo-area{display:flex;align-items:center;gap:6px;}
+    .card-logo-icon{width:22px;height:22px;border-radius:7px;background:linear-gradient(135deg,#4648d4,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:11px;}
+    .card-logo-text{font-family:var(--hfn);font-size:11px;font-weight:900;color:#3f43d9;letter-spacing:-.2px;}
+    .card-logo-text span{color:#7c3aed;}
+    .card-type{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#4648d4;padding:3px 9px;border-radius:5px;border:1px solid rgba(70,72,212,.2);background:rgba(70,72,212,.07);}
+    .card-avatar-row{display:flex;align-items:center;gap:12px;flex:1;margin:6px 0;}
+    .card-avatar{width:52px;height:52px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,#4648d4,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;font-family:var(--hfn);color:#fff;box-shadow:0 4px 12px rgba(70,72,212,.25),0 0 0 2.5px rgba(70,72,212,.15);overflow:hidden;border:2.5px solid rgba(255,255,255,.9);}
+    .card-student-name{font-family:var(--hfn);font-size:16px;font-weight:900;color:#111c2d;letter-spacing:-.3px;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .card-class-badge{display:inline-block;font-size:9px;color:#4648d4;font-weight:700;margin-bottom:5px;background:rgba(70,72,212,.08);padding:2px 8px;border-radius:5px;letter-spacing:.3px;}
+    .card-ids{display:flex;flex-direction:column;gap:3px;}
+    .card-id-row{display:flex;align-items:center;gap:5px;}
+    .card-id-label{font-size:8px;text-transform:uppercase;letter-spacing:.8px;color:#94a3b8;width:22px;flex-shrink:0;}
+    .card-id-val{font-family:var(--mono);font-size:10px;color:#334155;letter-spacing:.4px;font-weight:500;}
+    .card-bottom{display:flex;align-items:flex-end;justify-content:space-between;}
+    .card-chip{width:30px;height:22px;border-radius:5px;background:linear-gradient(135deg,#fbbf24,#f59e0b);display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:1fr 1fr 1fr;gap:1px;padding:3px;box-shadow:0 2px 6px rgba(245,158,11,.3);}
+    .chip-cell{background:rgba(0,0,0,.15);border-radius:1px;}
+    .card-year{font-size:10px;color:#94a3b8;font-family:var(--mono);}
+    .card-verified{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:#059669;padding:3px 8px;border-radius:5px;border:1px solid rgba(16,185,129,.25);background:rgba(16,185,129,.08);}
+
+    /* FRONT avatar — Idea 3 minimal: initials box */
+    .card-avatar.initials-box{border-radius:12px;background:linear-gradient(135deg,#4648d4,#7c3aed);box-shadow:0 4px 12px rgba(70,72,212,.3);}
+    /* card-avatar image uses circular style (Google / boy / girl) */
+    .card-back{transform:rotateY(180deg);background:rgba(255,255,255,.92);border:1px solid rgba(180,196,240,.7);box-shadow:0 12px 40px rgba(70,72,212,.13),0 2px 6px rgba(0,0,0,.06),inset 0 1px 0 rgba(255,255,255,.95);}
+    .card-back::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#a855f7,#7c3aed,#4648d4);border-radius:20px 20px 0 0;}
+    .card-back-content{padding:14px 16px;height:100%;display:flex;flex-direction:column;justify-content:space-between;}
+    .card-stripe{height:3px;background:linear-gradient(90deg,#4648d4,#7c3aed,#a855f7,#7c3aed,#4648d4);margin:0 -16px;margin-bottom:12px;opacity:.4;}
+    .back-fields{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:0;}
+    .back-fields.three{grid-template-columns:1fr 1fr 1fr;}
+    .back-field{background:rgba(70,72,212,.05);border-radius:9px;padding:8px 10px;border:1px solid rgba(70,72,212,.12);}
+    .back-field-label{font-size:7px;text-transform:uppercase;letter-spacing:.9px;color:#94a3b8;margin-bottom:3px;}
+    .back-field-val{font-family:var(--mono);font-size:12px;color:#334155;letter-spacing:.3px;font-weight:600;}
+    .back-field-val.gold{color:#d97706;font-weight:700;}
+    .back-field-val.green{color:#059669;font-weight:700;}
+    .back-field-val.red{color:#e11d48;font-weight:700;}
+    /* QR code area */
+    .card-qr-row{display:flex;align-items:flex-end;justify-content:space-between;}
+    .card-qr-info{display:flex;flex-direction:column;gap:3px;}
+    .card-qr-label{font-size:7px;text-transform:uppercase;letter-spacing:.8px;color:#94a3b8;}
+    .card-qr-url{font-size:9px;color:#4648d4;font-weight:700;letter-spacing:.2px;}
+    .card-qr-img{width:52px;height:52px;border-radius:7px;overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center;padding:4px;border:1px solid rgba(70,72,212,.15);box-shadow:0 2px 8px rgba(70,72,212,.1);}
+    .card-qr-img canvas{width:44px!important;height:44px!important;}
+    .card-flip-hint{text-align:center;font-size:10px;color:#94a3b8;margin:4px 0 12px;}
+
+    /* ─── FORMS ─── */
+    .form-group{margin-bottom:10px;}
+    .form-label{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.9px;color:var(--on-surface-v);margin-bottom:7px;}
+    .row-flex{display:flex;gap:8px;}
+    .form-control{width:100%;background:rgba(241,245,249,.8);border:1.5px solid rgba(203,213,225,.65);border-radius:13px;padding:10px 13px;font-size:13px;color:var(--on-surface);outline:none;font-family:var(--fn);transition:all .2s;}
+    .form-control::placeholder{color:rgba(148,163,184,.7);}
+    .form-control:focus{border-color:var(--primary);background:rgba(255,255,255,.95);box-shadow:0 0 0 3px rgba(70,72,212,.1);}
+    .form-control:disabled{background:rgba(241,245,249,.5);color:var(--on-surface-v);cursor:not-allowed;}
+    .form-control.mono{font-family:var(--mono);font-size:12px;letter-spacing:.5px;}
+    select.form-control{appearance:none;cursor:pointer;background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;background-size:14px;padding-right:38px;}
+
+    /* ─── BUTTONS ─── */
+    .btn-action{background:rgba(70,72,212,.08);color:var(--primary);border:1.5px solid rgba(70,72,212,.2);border-radius:11px;padding:11px 14px;font-size:11px;font-weight:800;cursor:pointer;font-family:var(--fn);white-space:nowrap;transition:all .2s;letter-spacing:.4px;text-transform:uppercase;}
+    .btn-action:hover{background:rgba(70,72,212,.15);border-color:var(--primary);transform:translateY(-1px);}
+    .btn-submit{width:100%;background:#1e293b;color:#fff;border:none;border-radius:14px;padding:13px;font-size:14px;font-weight:800;cursor:pointer;font-family:var(--fn);transition:all .22s;box-shadow:0 4px 16px rgba(15,23,42,.2);display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;letter-spacing:.2px;position:relative;overflow:hidden;}
+    .btn-submit::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.06) 0%,transparent 60%);pointer-events:none;}
+    .btn-submit:hover{background:#0f172a;transform:translateY(-2px);box-shadow:0 8px 24px rgba(15,23,42,.3);}
+    .btn-submit.primary{background:linear-gradient(135deg,#4648d4,#7c3aed);box-shadow:0 4px 18px rgba(70,72,212,.35);}
+    .btn-submit.primary:hover{box-shadow:0 8px 28px rgba(70,72,212,.45);}
+    .btn-glow{width:100%;background:linear-gradient(90deg,var(--primary),var(--primary-c));color:#fff;border:none;border-radius:999px;padding:15px 28px;font-size:15px;font-weight:800;cursor:pointer;font-family:var(--hfn);transition:all .22s;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 20px 40px rgba(99,102,241,.25);letter-spacing:.2px;}
+    .btn-glow:hover{transform:scale(1.03);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 24px 48px rgba(99,102,241,.35);}
+    .btn-glow:active{transform:scale(.98);}
+    .btn-google{width:100%;background:#fff;color:var(--on-surface);border:1.5px solid rgba(203,213,225,.8);border-radius:14px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--fn);display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px;transition:all .22s;box-shadow:0 2px 8px rgba(100,116,139,.1);}
+    .btn-google:hover{background:#f8fafc;transform:translateY(-1px);box-shadow:0 6px 18px rgba(100,116,139,.15);border-color:rgba(70,72,212,.3);}
+    .btn-text{background:none;border:none;color:var(--on-surface-v);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--fn);transition:color .2s;padding:4px 0;}
+    .btn-text:hover{color:var(--on-surface);}
+    .btn-text.danger{color:#f43f5e;}
+    .btn-text.danger:hover{color:#e11d48;}
+    .divider{display:flex;align-items:center;text-align:center;margin:14px 0;color:var(--on-surface-v);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;}
+    .divider::before,.divider::after{content:'';flex:1;border-bottom:1px solid rgba(203,213,225,.5);}
+    .divider:not(:empty)::before{margin-right:12px;}
+    .divider:not(:empty)::after{margin-left:12px;}
+
+    /* ─── PORTAL GRID ─── */
+    .portal-section-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.9px;color:var(--on-surface-v);margin-bottom:10px;margin-top:16px;}
+    .portal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:8px;}
+    .portal-card{background:rgba(255,255,255,.65);border:1.5px solid rgba(203,213,225,.5);border-radius:14px;padding:13px 10px;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+    .portal-card:hover:not(.soon){border-color:rgba(70,72,212,.4);transform:translateY(-2px);background:rgba(70,72,212,.06);box-shadow:0 4px 14px rgba(70,72,212,.1);}
+    .portal-card.active{background:rgba(70,72,212,.09);border-color:var(--primary);box-shadow:0 0 0 3px rgba(70,72,212,.1);}
+    .portal-card.soon{opacity:.5;cursor:default;}
+    .portal-card.locked-portal{border-color:var(--primary);background:rgba(70,72,212,.06);box-shadow:0 0 0 3px rgba(70,72,212,.12);cursor:default;}
+    .locked-badge{position:absolute;top:5px;right:5px;font-size:7px;font-weight:900;padding:2px 6px;border-radius:5px;background:var(--primary);color:#fff;text-transform:uppercase;letter-spacing:.5px;}
+    .portal-icon{font-size:22px;margin-bottom:5px;}
+    .portal-name{font-size:11px;font-weight:700;color:#475569;}
+    .portal-badge{position:absolute;top:5px;right:5px;font-size:7px;font-weight:900;padding:2px 6px;border-radius:5px;background:#f59e0b;color:#000;text-transform:uppercase;}
+
+    /* ─── FULL PORTAL GRID (returning) ─── */
+    .portal-grid-full{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:8px;}
+    .pf-card{background:rgba(255,255,255,.75);border:1.5px solid rgba(203,213,225,.55);border-radius:16px;padding:14px 12px 12px;cursor:pointer;transition:all .22s;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;gap:4px;}
+    .pf-card:active{transform:scale(.97);}
+    .pf-card.is-default{border-color:var(--primary);background:rgba(70,72,212,.07);box-shadow:0 0 0 3px rgba(70,72,212,.1);}
+    .pf-card.soon-card{opacity:.5;cursor:default;}
+    .pf-card-icon{font-size:26px;line-height:1;margin-bottom:2px;}
+    .pf-card-name{font-size:12px;font-weight:800;color:var(--on-surface);letter-spacing:-.2px;text-align:center;}
+    .pf-card-sub{font-size:9px;color:#94a3b8;font-family:var(--mono);text-align:center;}
+    .pf-default-dot{position:absolute;top:7px;right:7px;width:8px;height:8px;border-radius:50%;background:var(--primary);box-shadow:0 0 0 2px rgba(70,72,212,.2);}
+    .pf-soon-tag{position:absolute;top:5px;right:5px;font-size:7px;font-weight:900;padding:2px 6px;border-radius:5px;background:#f59e0b;color:#000;text-transform:uppercase;}
+
+    /* ─── PORTAL ACTION POPUP ─── */
+    .portal-action-overlay{position:fixed;inset:0;z-index:200;background:rgba(15,23,42,.3);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .25s;}
+    .portal-action-overlay.open{opacity:1;pointer-events:all;}
+    .portal-action-popup{
+      position:fixed;left:50%;bottom:0;transform:translateX(-50%) translateY(100%);
+      width:min(400px,100vw);z-index:201;
+      background:rgba(255,255,255,.98);border:1.5px solid rgba(203,213,225,.7);
+      border-radius:24px 24px 0 0;padding:24px 24px 32px;
+      box-shadow:0 -8px 40px rgba(70,72,212,.14);
+      transition:transform .32s cubic-bezier(.34,1.2,.64,1);
     }
-    .arc-ring-2 {
-      width: 600px; height: 600px;
-      border-color: rgba(99,102,241,.06);
+    .portal-action-popup.open{transform:translateX(-50%) translateY(0);}
+    .popup-portal-icon{font-size:36px;text-align:center;margin-bottom:6px;}
+    .popup-portal-name{font-family:var(--hfn);font-size:20px;font-weight:900;color:var(--on-surface);text-align:center;letter-spacing:-.4px;margin-bottom:4px;}
+    .popup-portal-default{font-size:10px;font-weight:700;text-align:center;color:#059669;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);border-radius:20px;padding:3px 12px;display:inline-block;margin:0 auto 14px;width:fit-content;}
+    .popup-actions{display:flex;gap:10px;margin-top:18px;}
+    .popup-btn{flex:1;border:none;border-radius:14px;padding:14px 10px;font-size:14px;font-weight:800;cursor:pointer;font-family:var(--fn);display:flex;align-items:center;justify-content:center;gap:7px;transition:all .2s;letter-spacing:.1px;}
+    .popup-btn.start{background:linear-gradient(135deg,#4648d4,#7c3aed);color:#fff;box-shadow:0 6px 20px rgba(70,72,212,.3);}
+    .popup-btn.start:hover{box-shadow:0 8px 28px rgba(70,72,212,.4);transform:translateY(-1px);}
+    .popup-btn.change{background:rgba(70,72,212,.07);color:var(--primary);border:1.5px solid rgba(70,72,212,.2);}
+    .popup-btn.change:hover{background:rgba(70,72,212,.13);transform:translateY(-1px);}
+    .popup-close{position:absolute;top:12px;right:16px;background:none;border:none;font-size:16px;color:#94a3b8;cursor:pointer;padding:4px 8px;border-radius:8px;transition:color .2s;}
+    .popup-close:hover{color:var(--on-surface);}
+
+    /* ─── RETURNING: "You're all set" banner (desktop) ─── */
+    .all-set-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:999px;background:var(--tertiary-f);color:#002113;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;}
+    .ms{font-family:'Material Symbols Outlined';font-size:inherit;font-style:normal;line-height:1;font-variation-settings:'FILL' 1,'wght' 700;}
+
+    /* ─── RETURN BANNER ─── */
+    .return-banner{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(70,72,212,.07),rgba(168,85,247,.04));border:1.5px solid rgba(70,72,212,.18);border-radius:14px;padding:11px 14px;margin-bottom:14px;cursor:pointer;transition:all .2s;}
+    .return-banner:hover{background:rgba(70,72,212,.1);border-color:rgba(70,72,212,.3);}
+    .return-banner-btn{background:var(--primary);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:11px;font-weight:800;cursor:pointer;font-family:var(--fn);white-space:nowrap;flex-shrink:0;transition:all .18s;}
+    .return-banner-btn:hover{background:var(--primary-c);}
+
+    /* ─── TAB BAR ─── */
+    .tab-bar{display:flex;gap:4px;background:rgba(241,245,249,.8);border-radius:14px;padding:4px;margin-bottom:16px;border:1px solid rgba(203,213,225,.35);}
+    .tab-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 10px;border:none;border-radius:10px;background:none;font-size:13px;font-weight:700;color:var(--on-surface-v);cursor:pointer;font-family:var(--fn);transition:all .22s;letter-spacing:-.1px;}
+    .tab-btn.active{background:#fff;color:var(--primary);box-shadow:0 2px 8px rgba(70,72,212,.12);}
+
+    /* ─── REF LOCK ─── */
+    .ref-lock-banner{background:linear-gradient(135deg,rgba(70,72,212,.07),rgba(70,72,212,.03));border:1.5px solid rgba(70,72,212,.22);border-radius:14px;padding:11px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;font-size:12px;color:#475569;line-height:1.4;}
+
+    /* ─── INFO BOX ─── */
+    .info-box{background:rgba(70,72,212,.05);border:1px solid rgba(70,72,212,.14);border-radius:13px;padding:12px 15px;font-size:12px;color:#475569;line-height:1.65;margin-bottom:14px;}
+    .info-box b{color:var(--on-surface);}
+
+    /* ─── TOAST ─── */
+    #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1e293b;color:#fff;padding:11px 24px;border-radius:40px;font-size:13px;font-weight:700;z-index:9999;opacity:0;pointer-events:none;transition:all .32s cubic-bezier(.34,1.56,.64,1);box-shadow:0 10px 32px rgba(0,0,0,.2);white-space:nowrap;max-width:92vw;}
+    #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+    #toast.success{background:#064e3b;border:1px solid rgba(16,185,129,.3);}
+    #toast.error{background:#7f1d1d;border:1px solid rgba(244,63,94,.3);}
+
+    /* ─── FILL MODAL ─── */
+    .modal-overlay{position:fixed;inset:0;z-index:100;background:rgba(15,23,42,.35);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .3s;}
+    .modal-overlay.open{opacity:1;pointer-events:all;}
+    .modal-box{background:rgba(255,255,255,.96);border:1.5px solid rgba(203,213,225,.7);border-radius:22px;padding:26px;width:100%;max-width:400px;box-shadow:0 24px 60px rgba(100,116,139,.25);transform:scale(.95);transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
+    .modal-overlay.open .modal-box{transform:scale(1);}
+    .modal-title{font-family:var(--hfn);font-size:17px;font-weight:800;color:var(--on-surface);margin-bottom:5px;}
+    .modal-sub{font-size:12px;color:var(--on-surface-v);margin-bottom:18px;line-height:1.5;}
+
+    /* ═══════════════════════════════════
+       PROFILE VERIFIED SCREEN — Idea 3 Minimal Frosted
+       ═══════════════════════════════════ */
+    .bottom-nav{display:none;}
+    body.profile-ready{background:linear-gradient(180deg,#eef1ff 0%,#f5f7ff 60%,#fff 100%);}
+    body.profile-ready .atmo{opacity:.9;}
+
+    /* Topnav */
+    body.profile-ready .topnav{background:rgba(255,255,255,.82);box-shadow:0 4px 20px rgba(70,72,212,.1);}
+    body.profile-ready .topnav-links{display:none;}
+
+    /* Layout */
+    body.profile-ready .page-wrap{padding:88px 16px 80px;align-items:flex-start;}
+    body.profile-ready .login-layout{max-width:420px;display:block;}
+
+    /* Hero header — "You're All Set" */
+    body.profile-ready .hero-left{display:flex;flex-direction:column;text-align:center;align-items:center;gap:6px;margin-bottom:16px;padding:0;}
+    body.profile-ready .hero-title{font-size:26px;font-weight:900;letter-spacing:-.6px;color:var(--on-surface)!important;-webkit-text-fill-color:var(--on-surface)!important;background:none!important;line-height:1.1;}
+    body.profile-ready .hero-title br{display:none;}
+    body.profile-ready .hero-title span{color:var(--primary)!important;-webkit-text-fill-color:var(--primary)!important;}
+    body.profile-ready #all-set-desktop{display:none!important;}
+    body.profile-ready .hero-badge{background:#62f0ae;color:#002113;border-radius:999px;padding:5px 14px;font-size:10px;font-weight:700;letter-spacing:.1em;box-shadow:0 4px 10px rgba(32,214,143,.2);}
+    body.profile-ready .hero-badge .material-symbols-outlined{font-size:13px!important;}
+    body.profile-ready .hero-subtitle,
+    body.profile-ready .hero-features{display:none!important;}
+
+    /* Step card wrapper — transparent */
+    body.profile-ready .step-card{background:transparent;border:0;box-shadow:none;padding:0;}
+    body.profile-ready .glass-card{background:transparent;border:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;}
+    body.profile-ready .step-bar,
+    body.profile-ready .card-header,
+    body.profile-ready .profile-banner,
+    body.profile-ready .local-done-notice,
+    body.profile-ready #google-upgrade-section,
+    body.profile-ready .card-flip-hint,
+    body.profile-ready .portal-section-label,
+    body.profile-ready .portal-grid,
+    body.profile-ready #btn-reset-profile{display:none!important;}
+    /* Keep full portal grid and tab content visible in profile-ready */
+    body.profile-ready .portal-grid-full{display:grid!important;}
+    body.profile-ready .tab-bar{display:flex!important;}
+    body.profile-ready #tab-content-profile,
+    body.profile-ready #tab-content-portal{display:block;}
+    body.profile-ready #tab-content-portal{display:none;}
+
+    /* ── ID CARD (Idea 3 Minimal Frosted — full flip preserved) ── */
+    body.profile-ready .card-scene{
+      width:100%;height:200px;margin:0 auto 16px;
+      cursor:pointer;perspective:1100px;
+    }
+    body.profile-ready .id-card{height:200px;border-radius:20px;}
+    body.profile-ready .card-face{border-radius:20px;}
+
+    /* Front — crisp white frosted */
+    body.profile-ready .card-front{
+      background:rgba(255,255,255,.95);
+      border:1px solid rgba(180,196,240,.8);
+      box-shadow:0 12px 36px rgba(70,72,212,.14),0 2px 6px rgba(0,0,0,.05),inset 0 1px 0 rgba(255,255,255,1);
+    }
+    body.profile-ready .card-front::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:3px;
+      background:linear-gradient(90deg,#4648d4,#7c3aed,#a855f7);border-radius:20px 20px 0 0;
+      display:block;
+    }
+    body.profile-ready .card-front::after{
+      content:'bolt';font-family:'Material Symbols Outlined';
+      position:absolute;right:-6px;bottom:-16px;font-size:110px;
+      color:rgba(70,72,212,.045);font-variation-settings:'FILL' 1,'wght' 700;line-height:1;
+      pointer-events:none;
     }
 
-    /* Ebolt-style brand top-left */
-    .brand-top {
-      position: fixed; top: 20px; left: 24px;
-      display: flex; align-items: center; gap: 8px;
-      z-index: 10; text-decoration: none;
-    }
-    .brand-icon {
-      width: 34px; height: 34px; border-radius: 9px;
-      background: linear-gradient(135deg,#312e81,#4f46e5);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px;
-      box-shadow: 0 3px 10px rgba(99,102,241,.3);
-    }
-    .brand-name {
-      font-family: var(--hfn); font-size: 17px; font-weight: 800;
-      color: #1e293b; letter-spacing: -.3px;
-    }
+    /* Back — light frosted (matches front) */
+    body.profile-ready .card-back{display:block;}
 
-    /* ── MAIN CARD ── */
-    .container {
-      width: 100%; max-width: 460px;
-      background: var(--card-bg);
-      border: 1.5px solid var(--card-border);
-      border-radius: 28px;
-      padding: 24px 28px 24px;
-      box-shadow:
-        0 8px 32px rgba(100,116,139,.12),
-        0 2px 8px rgba(100,116,139,.08),
-        0 0 0 1px rgba(255,255,255,.6) inset;
-      backdrop-filter: blur(28px);
-      -webkit-backdrop-filter: blur(28px);
-      z-index: 1; position: relative;
-      margin: auto;
-      animation: cardIn .55s cubic-bezier(.34,1.56,.64,1) both;
-    }
-    @keyframes cardIn { from { transform: translateY(36px) scale(.97); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+    /* Flip hint */
+    body.profile-ready .card-flip-hint{display:block!important;text-align:center;font-size:10px;color:#94a3b8;margin:0 0 14px;}
 
-    /* ── STEP DOTS ── */
-    .step-bar { display: flex; gap: 6px; margin-bottom: 16px; align-items: center; justify-content: center; }
-    .step-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(99,102,241,.2); transition: all .35s cubic-bezier(.34,1.56,.64,1); }
-    .step-dot.active { background: var(--primary); width: 28px; border-radius: 3px; }
-    .step-dot.done { background: var(--green); width: 10px; }
+    /* ── STATS ROW below card ── */
+    body.profile-ready .stats-row{
+      display:flex;gap:10px;margin:0 0 16px;justify-content:center;
+    }
+    body.profile-ready .stat-pill{
+      flex:1;height:78px;border-radius:18px;
+      background:rgba(255,255,255,.88);border:1px solid rgba(203,213,225,.35);
+      box-shadow:0 6px 18px rgba(70,72,212,.09);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+      padding:8px 6px;
+    }
+    body.profile-ready .stat-label{
+      font-size:9px;font-weight:700;text-transform:uppercase;
+      letter-spacing:.5px;color:#64748b;margin:0;order:1;
+    }
+    body.profile-ready .stat-val{
+      font-family:var(--hfn);font-size:20px;font-weight:900;line-height:1;
+      order:2;
+    }
+    body.profile-ready .stat-val.hp{color:#e11d48;}
+    body.profile-ready .stat-val.xp{color:#4648d4;}
+    body.profile-ready .stat-val.rp{color:#d97706;}
 
-    /* ── HEADER ── */
-    .header { text-align: center; margin-bottom: 14px; }
-    .logo-wrap {
-      width: 54px; height: 54px; border-radius: 50%;
-      background: rgba(255,255,255,.95);
-      border: 1.5px solid rgba(203,213,225,.6);
-      box-shadow: 0 6px 20px rgba(100,116,139,.15), 0 1px 3px rgba(0,0,0,.06);
-      display: inline-flex; align-items: center; justify-content: center;
-      margin-bottom: 10px;
-      animation: floatLogo 3s ease-in-out infinite alternate;
+    /* ── CTA button ── */
+    body.profile-ready .btn-glow{
+      width:100%;height:52px;border-radius:26px;
+      background:linear-gradient(135deg,#4648d4,#7c3aed);
+      font-size:15px;font-weight:800;letter-spacing:.2px;
+      box-shadow:0 10px 28px rgba(70,72,212,.32);
+      margin:0!important;
     }
-    .logo-inner {
-      width: 36px; height: 36px; border-radius: 11px;
-      background: linear-gradient(135deg,#4f46e5,#7c3aed);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px;
-      box-shadow: 0 4px 14px rgba(99,102,241,.4);
-    }
-    @keyframes floatLogo { 0% { transform: translateY(0); } 100% { transform: translateY(-5px); } }
-    .title { font-family: var(--hfn); font-size: 24px; font-weight: 800; letter-spacing: -.5px; color: #0f172a; margin-bottom: 6px; }
-    .title span { background: linear-gradient(90deg,#6366f1,#a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .subtitle { font-size: 13px; color: var(--text-muted); line-height: 1.55; max-width: 300px; margin: 0 auto; }
+    body.profile-ready .btn-glow:hover{box-shadow:0 14px 36px rgba(70,72,212,.42);}
+    body.profile-ready .btn-glow .material-symbols-outlined{font-size:18px!important;}
 
-    /* ── STEP PANELS ── */
-    .step-panel { display: none; animation: panelIn .35s ease both; }
-    .step-panel.active { display: block; }
-    @keyframes panelIn { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: translateX(0); } }
+    /* ── Bottom Nav ── */
+    body.profile-ready .bottom-nav{
+      position:fixed;left:0;right:0;bottom:0;height:58px;
+      background:rgba(255,255,255,.97);
+      display:flex;align-items:center;justify-content:space-around;
+      z-index:60;box-shadow:0 -2px 14px rgba(70,72,212,.08);
+      border-top:1px solid rgba(203,213,225,.4);
+    }
+    body.profile-ready .bottom-nav-item{
+      height:44px;min-width:64px;border-radius:22px;text-decoration:none;
+      color:#94a3b8;display:flex;flex-direction:column;align-items:center;
+      justify-content:center;gap:2px;font-family:var(--mono);font-size:9px;font-weight:700;
+      transition:all .2s;padding:0 12px;
+    }
+    body.profile-ready .bottom-nav-item .material-symbols-outlined{font-size:20px;font-variation-settings:'FILL' 0,'wght' 500;}
+    body.profile-ready .bottom-nav-item.active{background:#4648d4;color:#fff;}
+    body.profile-ready .bottom-nav-item.active .material-symbols-outlined{font-variation-settings:'FILL' 1,'wght' 700;}
 
-    /* ── PROFILE BANNER ── */
-    .profile-banner {
-      background: linear-gradient(135deg, rgba(99,102,241,.08), rgba(168,85,247,.05));
-      border: 1.5px solid rgba(99,102,241,.18);
-      border-radius: 18px; padding: 16px; margin-bottom: 18px;
-      display: flex; align-items: center; gap: 14px; position: relative; overflow: hidden;
-    }
-    .profile-banner::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-      background: linear-gradient(90deg,transparent,rgba(99,102,241,.4),transparent);
-    }
-    .profile-avatar {
-      width: 50px; height: 50px; border-radius: 15px; flex-shrink: 0;
-      background: linear-gradient(135deg,#6366f1,#a855f7);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 22px; font-weight: 900; font-family: var(--hfn); color: #fff;
-      box-shadow: 0 4px 14px rgba(99,102,241,.3); overflow: hidden;
-    }
-    .profile-info { flex: 1; min-width: 0; }
-    .profile-name { font-size: 16px; font-weight: 800; color: #0f172a; letter-spacing: -.3px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .profile-meta { font-size: 11px; color: var(--text-muted); font-family: var(--mono); }
-    .profile-badge {
-      font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .8px;
-      padding: 3px 8px; border-radius: 6px; margin-top: 5px; display: inline-block;
-      background: rgba(16,185,129,.1); color: #059669; border: 1px solid rgba(16,185,129,.2);
-    }
-
-    /* LOCAL DONE NOTICE */
-    .local-done-notice {
-      background: linear-gradient(135deg,rgba(16,185,129,.08),rgba(16,185,129,.04));
-      border: 1.5px solid rgba(16,185,129,.25); border-radius: 14px;
-      padding: 12px 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 12px;
-    }
-    .local-done-check {
-      width: 34px; height: 34px; border-radius: 10px;
-      background: linear-gradient(135deg,#10b981,#059669);
-      display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
-      box-shadow: 0 3px 10px rgba(16,185,129,.3);
-    }
-    .local-done-text { font-size: 12px; line-height: 1.5; color: #475569; }
-    .local-done-text b { color: #0f172a; font-size: 13px; display: block; margin-bottom: 2px; }
-
-    /* ── FORMS ── */
-    .form-group { margin-bottom: 10px; }
-    .form-label {
-      display: flex; align-items: center; gap: 5px;
-      font-size: 10px; font-weight: 800; text-transform: uppercase;
-      letter-spacing: .9px; color: var(--text-muted); margin-bottom: 7px;
-    }
-    .label-icon { font-size: 12px; opacity: .7; }
-    .row-flex { display: flex; gap: 8px; }
-    .form-control {
-      width: 100%; background: var(--input-bg);
-      border: 1.5px solid var(--input-border);
-      border-radius: 13px; padding: 10px 13px; font-size: 13px;
-      color: var(--text); outline: none; font-family: var(--fn); transition: all .2s;
-    }
-    .form-control::placeholder { color: rgba(148,163,184,.7); }
-    .form-control:focus {
-      border-color: var(--primary);
-      background: rgba(255,255,255,.95);
-      box-shadow: 0 0 0 3px rgba(99,102,241,.12);
-    }
-    .form-control:disabled { background: rgba(241,245,249,.5); color: var(--text-muted); cursor: not-allowed; }
-    .form-control.mono { font-family: var(--mono); font-size: 12px; letter-spacing: .5px; }
-    select.form-control {
-      appearance: none; cursor: pointer;
-      background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-      background-repeat: no-repeat; background-position: right 13px center; background-size: 14px; padding-right: 38px;
-    }
-    select.form-control option { background: #f8fafc; color: #1e293b; }
-
-    /* LOCKED FIELD */
-    .locked-field {
-      background: rgba(241,245,249,.7); border: 1.5px dashed rgba(203,213,225,.8);
-      border-radius: 13px; padding: 11px 15px; font-size: 12px;
-      font-family: var(--mono); color: var(--text-muted); letter-spacing: .4px;
-      display: flex; align-items: center; gap: 8px;
-    }
-
-    /* ── BUTTONS ── */
-    .btn-action {
-      background: rgba(99,102,241,.08); color: #6366f1;
-      border: 1.5px solid rgba(99,102,241,.2);
-      border-radius: 11px; padding: 11px 14px; font-size: 11px; font-weight: 800;
-      cursor: pointer; font-family: var(--fn); white-space: nowrap;
-      transition: all .2s; letter-spacing: .4px; text-transform: uppercase;
-    }
-    .btn-action:hover { background: rgba(99,102,241,.15); border-color: var(--primary); transform: translateY(-1px); }
-
-    /* Dark "Get Started" style submit */
-    .btn-submit {
-      width: 100%;
-      background: #1e293b;
-      color: #fff; border: none; border-radius: 14px;
-      padding: 13px; font-size: 14px; font-weight: 800; cursor: pointer;
-      font-family: var(--fn); transition: all .22s;
-      box-shadow: 0 4px 16px rgba(15,23,42,.2);
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      margin-top: 6px; letter-spacing: .2px; position: relative; overflow: hidden;
-    }
-    .btn-submit::after {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(135deg,rgba(255,255,255,.06) 0%,transparent 60%);
-      pointer-events: none;
-    }
-    .btn-submit:hover { background: #0f172a; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(15,23,42,.3); }
-    .btn-submit:active { transform: translateY(0); }
-    .btn-submit.primary {
-      background: linear-gradient(135deg,#5b5ef4,#7c3aed);
-      box-shadow: 0 4px 18px rgba(99,102,241,.35);
-    }
-    .btn-submit.primary:hover { box-shadow: 0 8px 28px rgba(99,102,241,.45); }
-
-    /* Google button */
-    .btn-google {
-      width: 100%; background: #fff; color: #1e293b; border: 1.5px solid rgba(203,213,225,.8);
-      border-radius: 14px; padding: 13px; font-size: 13px; font-weight: 700; cursor: pointer;
-      font-family: var(--fn); display: flex; align-items: center; justify-content: center;
-      gap: 10px; margin-bottom: 16px; transition: all .22s;
-      box-shadow: 0 2px 8px rgba(100,116,139,.1);
-    }
-    .btn-google:hover { background: #f8fafc; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(100,116,139,.15); border-color: rgba(99,102,241,.3); }
-
-    .btn-text { background: none; border: none; color: var(--text-muted); font-size: 12px; font-weight: 600; cursor: pointer; font-family: var(--fn); transition: color .2s; padding: 4px 0; }
-    .btn-text:hover { color: var(--text); }
-    .btn-text.danger { color: #f43f5e; }
-    .btn-text.danger:hover { color: #e11d48; }
-
-    /* DIVIDER */
-    .divider {
-      display: flex; align-items: center; text-align: center; margin: 16px 0;
-      color: var(--text-muted); font-size: 10px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 1.2px;
-    }
-    .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid rgba(203,213,225,.6); }
-    .divider:not(:empty)::before { margin-right: 12px; }
-    .divider:not(:empty)::after  { margin-left: 12px; }
-
-    /* PORTAL GRID */
-    .portal-section-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .9px; color: var(--text-muted); margin-bottom: 10px; margin-top: 18px; }
-    .portal-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 8px; margin-bottom: 8px; }
-    .portal-card {
-      background: rgba(255,255,255,.65); border: 1.5px solid rgba(203,213,225,.5);
-      border-radius: 14px; padding: 13px 10px; text-align: center; cursor: pointer;
-      transition: all .2s; position: relative; overflow: hidden;
-    }
-    .portal-card:hover:not(.soon) { border-color: rgba(99,102,241,.4); transform: translateY(-2px); background: rgba(99,102,241,.06); box-shadow: 0 4px 14px rgba(99,102,241,.1); }
-    .portal-card.active { background: rgba(99,102,241,.09); border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99,102,241,.1); }
-    .portal-card.soon { opacity: .5; cursor: default; }
-    .portal-icon { font-size: 22px; margin-bottom: 5px; }
-    .portal-name { font-size: 11px; font-weight: 700; color: #475569; }
-    .portal-badge { position: absolute; top: 5px; right: 5px; font-size: 7px; font-weight: 900; padding: 2px 6px; border-radius: 5px; background: var(--yellow); color: #000; text-transform: uppercase; }
-
-    /* CURRENCY PILLS */
-    .currency-pills { display: flex; gap: 8px; margin-top: 14px; }
-    .cp { flex: 1; background: rgba(255,255,255,.7); border: 1px solid rgba(203,213,225,.5); border-radius: 12px; padding: 10px 8px; text-align: center; }
-    .cp-val { font-size: 15px; font-weight: 900; font-family: var(--mono); }
-    .cp-val.hp { color: #e11d48; } .cp-val.xp { color: #6366f1; } .cp-val.rp { color: #d97706; }
-    .cp-label { font-size: 9px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: .5px; margin-top: 3px; }
-
-    /* INFO BOX */
-    .info-box { background: rgba(99,102,241,.06); border: 1px solid rgba(99,102,241,.15); border-radius: 13px; padding: 12px 15px; font-size: 12px; color: #475569; line-height: 1.65; margin-bottom: 16px; }
-    .info-box b { color: #1e293b; }
-    .info-box.lock-box { background: rgba(245,158,11,.06); border-color: rgba(245,158,11,.2); }
-    .info-box.lock-box b { color: #d97706; }
-
-    /* TOAST */
-    #toast {
-      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
-      background: #1e293b; color: #fff; padding: 11px 24px; border-radius: 40px;
-      font-size: 13px; font-weight: 700; z-index: 9999; opacity: 0; pointer-events: none;
-      transition: all .32s cubic-bezier(.34,1.56,.64,1);
-      box-shadow: 0 10px 32px rgba(0,0,0,.2); white-space: nowrap; max-width: 92vw;
-    }
-    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-    #toast.success { background: #064e3b; border: 1px solid rgba(16,185,129,.3); }
-    #toast.error   { background: #7f1d1d; border: 1px solid rgba(244,63,94,.3); }
-
-    /* ══════════════════════════════════
-       3D STUDENT ID CARD — Light Theme
-    ══════════════════════════════════ */
-    .card-scene { perspective: 1100px; width: 100%; height: 210px; margin: 0 auto 6px; cursor: pointer; }
-    .id-card { width: 100%; height: 210px; position: relative; transform-style: preserve-3d; transition: transform .75s cubic-bezier(.25,.46,.45,.94); border-radius: 20px; }
-    .id-card.flipped { transform: rotateY(180deg); }
-    .card-face { position: absolute; inset: 0; border-radius: 20px; backface-visibility: hidden; overflow: hidden; }
-
-    /* FRONT — deep indigo like Notion/Linear card */
-    .card-front {
-      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 35%, #3730a3 65%, #1e1b4b 100%);
-      box-shadow: 0 16px 48px rgba(49,46,129,.35), 0 2px 6px rgba(0,0,0,.15), 0 0 0 1px rgba(255,255,255,.08) inset;
-    }
-    .card-front::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg,transparent,rgba(165,180,252,.7),rgba(192,132,252,.6),transparent);
-    }
-    /* Holographic shimmer */
-    .card-hologram {
-      position: absolute; inset: 0;
-      background: linear-gradient(110deg,
-        transparent 20%,
-        rgba(165,180,252,.05) 35%,
-        rgba(192,132,252,.08) 50%,
-        rgba(236,72,153,.04) 65%,
-        transparent 80%
-      );
-      animation: holoShift 4s ease-in-out infinite alternate;
-      pointer-events: none;
-    }
-    @keyframes holoShift { 0% { opacity: .5; } 100% { opacity: 1; } }
-    /* Subtle grid */
-    .card-grid {
-      position: absolute; inset: 0; opacity: .05;
-      background-image: linear-gradient(rgba(165,180,252,1) 1px,transparent 1px), linear-gradient(90deg,rgba(165,180,252,1) 1px,transparent 1px);
-      background-size: 36px 36px;
-    }
-    .card-content { position: relative; z-index: 1; padding: 18px 20px; height: 100%; display: flex; flex-direction: column; }
-    .card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-    .card-logo-area { display: flex; align-items: center; gap: 8px; }
-    .card-logo-icon { width: 30px; height: 30px; border-radius: 9px; background: linear-gradient(135deg,#6366f1,#a855f7); display: flex; align-items: center; justify-content: center; font-size: 15px; box-shadow: 0 3px 10px rgba(99,102,241,.5); }
-    .card-logo-text { font-family: var(--hfn); font-size: 13px; font-weight: 900; color: rgba(255,255,255,.9); letter-spacing: -.2px; }
-    .card-logo-text span { color: #a5b4fc; }
-    .card-type { font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; color: rgba(165,180,252,.6); padding: 3px 8px; border-radius: 5px; border: 1px solid rgba(165,180,252,.15); background: rgba(0,0,0,.15); }
-    .card-avatar-row { display: flex; align-items: center; gap: 13px; flex: 1; }
-    .card-avatar { width: 56px; height: 56px; border-radius: 14px; flex-shrink: 0; background: linear-gradient(135deg,#6366f1,#a855f7,#ec4899); display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; font-family: var(--hfn); color: #fff; box-shadow: 0 5px 18px rgba(99,102,241,.5), 0 0 0 2px rgba(255,255,255,.15); overflow: hidden; }
-    .card-details { flex: 1; min-width: 0; }
-    .card-student-name { font-family: var(--hfn); font-size: 16px; font-weight: 900; color: #fff; letter-spacing: -.3px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .card-class { font-size: 11px; color: #a5b4fc; font-weight: 700; margin-bottom: 7px; }
-    .card-ids { display: flex; flex-direction: column; gap: 3px; }
-    .card-id-row { display: flex; align-items: center; gap: 6px; }
-    .card-id-label { font-size: 8px; text-transform: uppercase; letter-spacing: .8px; color: rgba(165,180,252,.5); width: 22px; flex-shrink: 0; }
-    .card-id-val { font-family: var(--mono); font-size: 10px; color: #c4b5fd; letter-spacing: .4px; }
-    .card-bottom { display: flex; align-items: flex-end; justify-content: space-between; margin-top: auto; }
-    .card-chip { width: 36px; height: 27px; border-radius: 5px; background: linear-gradient(135deg,#fbbf24,#f59e0b); border: 1px solid rgba(255,255,255,.3); display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; gap: 1px; padding: 3px; box-shadow: 0 2px 8px rgba(245,158,11,.4); }
-    .chip-cell { background: rgba(0,0,0,.2); border-radius: 1px; }
-    .card-year { font-size: 10px; color: rgba(165,180,252,.45); font-family: var(--mono); }
-    .card-verified { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .8px; color: #6ee7b7; padding: 3px 8px; border-radius: 5px; border: 1px solid rgba(16,185,129,.25); background: rgba(16,185,129,.1); }
-
-    /* BACK */
-    .card-back { transform: rotateY(180deg); background: linear-gradient(145deg,#1e1b4b,#2d2a6e,#1e1b4b); box-shadow: 0 16px 48px rgba(49,46,129,.35); }
-    .card-back-content { padding: 18px 20px; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
-    .card-stripe { height: 32px; background: linear-gradient(90deg,rgba(30,27,75,0),rgba(99,102,241,.3),rgba(168,85,247,.3),rgba(30,27,75,0)); margin: 0 -20px; margin-bottom: 12px; }
-    .back-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
-    .back-field { background: rgba(0,0,0,.25); border-radius: 9px; padding: 8px 10px; border: 1px solid rgba(165,180,252,.08); }
-    .back-field-label { font-size: 8px; text-transform: uppercase; letter-spacing: .8px; color: rgba(165,180,252,.45); margin-bottom: 3px; }
-    .back-field-val { font-family: var(--mono); font-size: 11px; color: #c4b5fd; letter-spacing: .3px; }
-    .card-barcode { height: 36px; display: flex; align-items: center; gap: 1px; opacity: .55; }
-    .bar { background: #a5b4fc; border-radius: 1px; }
-    .card-flip-hint { text-align: center; font-size: 10px; color: var(--text-sub); margin-top: 4px; margin-bottom: 14px; }
-
-    /* FILL MODAL */
-    .modal-overlay {
-      position: fixed; inset: 0; z-index: 100;
-      background: rgba(15,23,42,.35); backdrop-filter: blur(6px);
-      display: flex; align-items: center; justify-content: center; padding: 16px;
-      opacity: 0; pointer-events: none; transition: opacity .3s;
-    }
-    .modal-overlay.open { opacity: 1; pointer-events: all; }
-    .modal-box {
-      background: rgba(255,255,255,.96); border: 1.5px solid rgba(203,213,225,.7);
-      border-radius: 22px; padding: 26px; width: 100%; max-width: 400px;
-      box-shadow: 0 24px 60px rgba(100,116,139,.25);
-      transform: scale(.95); transition: transform .3s cubic-bezier(.34,1.56,.64,1);
-    }
-    .modal-overlay.open .modal-box { transform: scale(1); }
-    .modal-title { font-family: var(--hfn); font-size: 17px; font-weight: 800; color: #0f172a; margin-bottom: 5px; }
-    .modal-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 18px; line-height: 1.5; }
-
-    @media(max-width:400px){
-      .container{padding:28px 18px 22px;}
-      .card-scene,.id-card{height:190px;}
-    }
+    @media(max-width:400px){.step-card{padding:18px 14px;}.card-scene,.id-card{height:190px;}}
     @keyframes spin{to{transform:rotate(360deg);}}
   </style>
 </head>
 <body>
 
-<!-- Sky decorations -->
-<div class="sun"></div>
-<div class="arc-ring"></div>
-<div class="arc-ring arc-ring-2"></div>
-<div class="clouds">
-  <div class="cloud c1"></div>
-  <div class="cloud c2"></div>
-  <div class="cloud c3"></div>
-  <div class="cloud c4"></div>
-  <div class="cloud c5"></div>
+<!-- Atmospheric background -->
+<div class="atmo">
+  <div class="atmo-blob1"></div>
+  <div class="atmo-blob2"></div>
+  <span class="atmo-sun material-symbols-outlined" style="font-variation-settings:'FILL' 1;position:absolute;top:10px;right:20px;font-size:100px;color:rgba(251,191,36,.38);">wb_sunny</span>
+  <div class="cloud-anim" style="position:absolute;top:10%;">
+    <span class="material-symbols-outlined" style="font-size:120px;color:rgba(255,255,255,.75);">cloud</span>
+  </div>
+  <div class="cloud-anim2" style="position:absolute;top:30%;">
+    <span class="material-symbols-outlined" style="font-size:80px;color:rgba(255,255,255,.55);">cloud</span>
+  </div>
 </div>
 
-<!-- Brand top-left (Ebolt style) -->
-<a class="brand-top" href="#">
-  <div class="brand-icon">⚡</div>
-  <div class="brand-name">ThunderStudy</div>
-</a>
+<!-- Top Nav -->
+<nav class="topnav">
+  <a class="topnav-brand" href="#">
+    <span class="material-symbols-outlined topnav-brand-icon" style="font-variation-settings:'FILL' 1;">bolt</span>
+    <span class="topnav-brand-name">ThunderStudy</span>
+  </a>
+  <div class="topnav-links">
+    <a href="#" class="topnav-link active" id="nav-profile-link" onclick="switchTab('profile');return false;">PROFILE</a>
+    <a href="https://commercesehoga.github.io/fqa" target="_blank" class="topnav-link">FQA</a>
+    <a href="#" class="topnav-link" id="nav-portal-link" onclick="switchTab('portal');return false;">PORTAL</a>
+    <a href="https://commercesehoga.github.io/dashboard" target="_blank" class="topnav-link">DASHBOARD</a>
+  </div>
+</nav>
 
-<!-- FILL REQUIRED FIELDS MODAL -->
+<!-- Profile Bottom Nav -->
+<nav class="bottom-nav" aria-label="Profile navigation">
+  <a href="#" class="bottom-nav-item active" id="bnav-profile" onclick="switchTab('profile');return false;">
+    <span class="material-symbols-outlined">person</span>
+    <span>PROFILE</span>
+  </a>
+  <a href="https://commercesehoga.github.io/fqa" target="_blank" class="bottom-nav-item">
+    <span class="material-symbols-outlined">help</span>
+    <span>FQA</span>
+  </a>
+  <a href="#" class="bottom-nav-item" id="bnav-portal" onclick="switchTab('portal');return false;">
+    <span class="material-symbols-outlined">school</span>
+    <span>PORTAL</span>
+  </a>
+  <a href="https://commercesehoga.github.io/dashboard" target="_blank" class="bottom-nav-item">
+    <span class="material-symbols-outlined">dashboard</span>
+    <span>DASH</span>
+  </a>
+</nav>
+
+<!-- Portal Selector Modal -->
+<div class="modal-overlay" id="portal-selector-modal">
+  <div class="modal-box">
+    <div class="modal-title">🎯 Change Study Portal</div>
+    <div class="modal-sub">Select your primary exam portal. You can switch anytime.</div>
+    <div class="portal-grid" id="modal-portal-grid" style="margin-bottom:16px;"></div>
+    <button class="btn-submit primary" id="portal-modal-save" style="margin-top:0;">
+      <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;font-size:18px;vertical-align:middle;">bolt</span>
+      Lock Portal &amp; Launch
+    </button>
+    <div style="text-align:center;margin-top:10px;">
+      <button class="btn-text" onclick="document.getElementById('portal-selector-modal').classList.remove('open')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Fill modal -->
 <div class="modal-overlay" id="fill-modal">
   <div class="modal-box">
     <div class="modal-title">⚠️ Complete Your Profile</div>
@@ -493,177 +500,306 @@
   </div>
 </div>
 
-<div class="container">
-  <div class="step-bar" id="step-bar">
-    <div class="step-dot active" id="dot-0"></div>
-    <div class="step-dot" id="dot-2"></div>
-  </div>
+<!-- Toast -->
+<div id="toast">Saved!</div>
 
-  <div class="header">
-    <div class="logo-wrap">
-      <div class="logo-inner">⚡</div>
+<!-- Page Wrap -->
+<div class="page-wrap">
+  <div class="login-layout">
+
+    <!-- ══ DESKTOP HERO LEFT ══ -->
+    <div class="hero-left login-layout-left">
+      <div class="hero-badge">
+        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;font-size:14px;">verified</span>
+        Profile Verified
+      </div>
+      <h1 class="hero-title">You're All<br>Set to <span>Study!</span></h1>
+      <p class="hero-subtitle">Access CUET, SSC, Banking, JEE & NEET and more — one profile, every portal.</p>
+      <div class="hero-features">
+        <div class="hero-feat">
+          <div class="hero-feat-icon"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 1;">sync</span></div>
+          <span>Progress syncs across all portals</span>
+        </div>
+        <div class="hero-feat">
+          <div class="hero-feat-icon"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 1;">leaderboard</span></div>
+          <span>Compete on global leaderboards</span>
+        </div>
+        <div class="hero-feat">
+          <div class="hero-feat-icon"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 1;">bolt</span></div>
+          <span>Earn XP, HP & rank up daily</span>
+        </div>
+      </div>
     </div>
-    <h1 class="title">Thunder<span>Study</span></h1>
-    <p class="subtitle" id="screen-subtitle">Sign in with email to access your study portal</p>
-  </div>
 
-  <!-- ── STEP 0 ── -->
-  <div class="step-panel active" id="step-0">
+    <!-- ══ STEP CARD RIGHT ══ -->
+    <div class="login-layout-right">
+      <div class="glass-card step-card">
 
-    <!-- RETURNING USER -->
-    <div id="returning-banner" style="display:none;">
-      <div class="local-done-notice" id="local-done-notice" style="display:none;">
-        <div class="local-done-check">✅</div>
-        <div class="local-done-text">
-          <b>Local Login Complete</b>
-          Profile saved. Sign in with Google to sync across all devices.
+        <!-- Step dots -->
+        <div class="step-bar" id="step-bar">
+          <div class="step-dot active" id="dot-0"></div>
+          <div class="step-dot" id="dot-1"></div>
         </div>
-      </div>
 
-      <div class="profile-banner">
-        <div class="profile-avatar" id="profile-avatar-el">?</div>
-        <div class="profile-info">
-          <div class="profile-name" id="profile-banner-name">Student</div>
-          <div class="profile-meta" id="profile-banner-meta">Loading…</div>
-          <div class="profile-badge" id="profile-badge">✓ Profile Active</div>
+        <!-- Card header -->
+        <div class="card-header" id="card-header">
+          <div class="logo-wrap"><div class="logo-inner">⚡</div></div>
+          <h1 class="card-title">Thunder<span>Study</span></h1>
+          <p class="card-sub" id="screen-subtitle">Sign in to access your study portal</p>
         </div>
-      </div>
 
-      <!-- 3D ID CARD -->
-      <div class="card-scene" id="card-scene" title="Click to flip">
-        <div class="id-card" id="id-card">
-          <div class="card-face card-front">
-            <div class="card-grid"></div>
-            <div class="card-hologram"></div>
-            <div class="card-content">
-              <div class="card-top">
-                <div class="card-logo-area">
-                  <div class="card-logo-icon">⚡</div>
-                  <div class="card-logo-text">Thunder<span>Study</span></div>
-                </div>
-                <div class="card-type">Student ID</div>
+        <!-- ══ STEP 0 ══ -->
+        <div class="step-panel active" id="step-0">
+
+          <!-- RETURNING USER -->
+          <div id="returning-banner" style="display:none;">
+            <!-- "You're all set" on desktop -->
+            <div id="all-set-desktop" class="all-set-badge" style="display:none;">
+              <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1;">verified</span>
+              You're All Set!
+            </div>
+
+            <!-- Return-to-portal banner (shown when coming from a portal) -->
+            <div class="return-banner" id="return-banner" style="display:none;">
+              <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1;flex-shrink:0;">arrow_back</span>
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:12px;font-weight:800;color:var(--on-surface);" id="return-banner-name">Back to Portal</div>
+                <div style="font-size:10px;color:var(--on-surface-v);" id="return-banner-url"></div>
               </div>
-              <div class="card-avatar-row">
-                <div class="card-avatar" id="card-avatar">?</div>
-                <div class="card-details">
-                  <div class="card-student-name" id="card-name">—</div>
-                  <div class="card-class" id="card-class">—</div>
-                  <div class="card-ids">
-                    <div class="card-id-row"><div class="card-id-label">SID</div><div class="card-id-val" id="card-sid">—</div></div>
-                    <div class="card-id-row"><div class="card-id-label">REG</div><div class="card-id-val" id="card-reg">—</div></div>
+              <button class="return-banner-btn" id="return-banner-btn">Return ↗</button>
+            </div>
+
+            <!-- Tab Bar -->
+            <div class="tab-bar" id="tab-bar">
+              <button class="tab-btn active" id="tab-profile-btn" onclick="switchTab('profile')">
+                <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 1;">person</span>
+                Profile
+              </button>
+              <button class="tab-btn" id="tab-portal-btn" onclick="switchTab('portal')">
+                <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 1;">school</span>
+                Portals
+              </button>
+            </div>
+
+            <!-- ── PROFILE TAB ── -->
+            <div id="tab-content-profile">
+              <div class="local-done-notice" id="local-done-notice" style="display:none;">
+                <div class="local-done-check">✅</div>
+                <div class="local-done-text"><b>Local Login Complete</b>Profile saved. Link Google to sync across devices.</div>
+              </div>
+
+              <div class="profile-banner">
+                <div class="profile-avatar" id="profile-avatar-el">?</div>
+                <div style="flex:1;min-width:0;">
+                  <div class="profile-name" id="profile-banner-name">Student</div>
+                  <div class="profile-meta" id="profile-banner-meta">Loading…</div>
+                  <div class="profile-badge" id="profile-badge">✓ Profile Active</div>
+                </div>
+              </div>
+
+              <!-- ID Card -->
+              <div class="card-scene" id="card-scene" title="Click to flip">
+                <div class="id-card" id="id-card">
+                  <div class="card-face card-front">
+                    <div class="card-content">
+                      <div class="card-top">
+                        <div class="card-logo-area">
+                          <div class="card-logo-icon">⚡</div>
+                          <div class="card-logo-text">Thunder<span>Study</span></div>
+                        </div>
+                        <div class="card-type" id="card-portal-badge">Student ID</div>
+                      </div>
+                      <div class="card-avatar-row">
+                        <div class="card-avatar" id="card-avatar">?</div>
+                        <div class="card-details" style="flex:1;min-width:0;">
+                          <div class="card-student-name" id="card-name">—</div>
+                          <div class="card-class-badge" id="card-class">—</div>
+                          <div class="card-ids">
+                            <div class="card-id-row"><div class="card-id-label">SID</div><div class="card-id-val" id="card-sid">—</div></div>
+                            <div class="card-id-row"><div class="card-id-label">REG</div><div class="card-id-val" id="card-reg">—</div></div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="card-bottom">
+                        <div class="card-chip">
+                          <div class="chip-cell"></div><div class="chip-cell"></div><div class="chip-cell"></div>
+                          <div class="chip-cell"></div><div class="chip-cell"></div><div class="chip-cell"></div>
+                          <div class="chip-cell"></div><div class="chip-cell"></div><div class="chip-cell"></div>
+                        </div>
+                        <div class="card-verified">✓ Verified</div>
+                        <div class="card-year" id="card-year">2026</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-face card-back">
+                    <div class="card-back-content">
+                      <div>
+                        <div class="card-stripe"></div>
+                        <div class="back-fields" style="margin-bottom:7px;">
+                          <div class="back-field"><div class="back-field-label">Exam Portal</div><div class="back-field-val" id="card-exam">—</div></div>
+                          <div class="back-field"><div class="back-field-label">Rank</div><div class="back-field-val gold" id="card-rank">—</div></div>
+                        </div>
+                        <div class="back-fields three">
+                          <div class="back-field"><div class="back-field-label">❤️ HP</div><div class="back-field-val red" id="card-hp">0</div></div>
+                          <div class="back-field"><div class="back-field-label">⭐ XP</div><div class="back-field-val gold" id="card-xp">0</div></div>
+                          <div class="back-field"><div class="back-field-label">🏆 RP</div><div class="back-field-val green" id="card-rp">0</div></div>
+                        </div>
+                      </div>
+                      <div class="card-qr-row">
+                        <div class="card-qr-info">
+                          <div class="card-qr-label">Scan to open portal</div>
+                          <div class="card-qr-url" id="card-qr-url">thunderstudy.app</div>
+                          <div style="font-size:7px;color:rgba(70,72,212,.3);margin-top:4px;font-family:var(--mono);" id="card-joined-back">Joined —</div>
+                        </div>
+                        <div class="card-qr-img" id="card-qr-img">
+                          <canvas id="card-qr-canvas"></canvas>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div class="card-bottom">
-                <div class="card-chip">
-                  <div class="chip-cell"></div><div class="chip-cell"></div><div class="chip-cell"></div>
-                  <div class="chip-cell"></div><div class="chip-cell"></div><div class="chip-cell"></div>
-                  <div class="chip-cell"></div><div class="chip-cell"></div><div class="chip-cell"></div>
+              <div class="card-flip-hint">👆 Tap card to flip — stats & portal on back</div>
+
+              <!-- Google link section -->
+              <div id="google-upgrade-section">
+                <button class="btn-google" id="btn-google-signin">
+                  <svg width="18" height="18" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/><path d="M3.964 10.71a5.414 5.414 0 0 1-.282-1.71c0-.593.102-1.17.282-1.71V4.957H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.043l3.007-2.333z" fill="#FBBC05"/><path d="M9 3.579c1.32 0 2.507.454 3.44 1.345l2.582-2.58C13.463.896 11.428 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.579 9 3.579z" fill="#EA4335"/></svg>
+                  <span id="google-btn-label">Continue with Google</span>
+                </button>
+              </div>
+
+              <!-- Stats -->
+              <div class="stats-row">
+                <div class="stat-pill"><div class="stat-val hp" id="cp-hp">0</div><div class="stat-label">❤️ HP</div></div>
+                <div class="stat-pill"><div class="stat-val xp" id="cp-xp">0</div><div class="stat-label">⭐ XP</div></div>
+                <div class="stat-pill"><div class="stat-val rp" id="cp-rp">0</div><div class="stat-label">🏆 RP</div></div>
+              </div>
+
+              <div style="text-align:center;margin-top:14px;">
+                <button class="btn-text danger" id="btn-reset-profile">Reset / Change Profile</button>
+              </div>
+            </div><!-- /tab-content-profile -->
+
+            <!-- ── PORTAL TAB ── -->
+            <div id="tab-content-portal" style="display:none;">
+              <div class="portal-section-label" style="display:flex;align-items:center;justify-content:space-between;margin-top:4px;">
+                <span>📚 Study Portals</span>
+                <span style="font-size:9px;color:var(--on-surface-v);font-weight:600;text-transform:none;letter-spacing:0;">Tap to start or set default</span>
+              </div>
+              <div class="portal-grid-full" id="returning-portal-grid"></div>
+
+              <!-- Per-portal action popup -->
+              <div class="portal-action-popup" id="portal-action-popup">
+                <div class="popup-portal-icon" id="pap-icon">⚡</div>
+                <div class="popup-portal-name" id="pap-name">Portal</div>
+                <div class="popup-portal-default" id="pap-default-tag" style="display:none;">✓ Default Portal</div>
+                <div class="popup-actions">
+                  <button class="popup-btn start" id="pap-start">
+                    <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 1;">bolt</span>
+                    Start
+                  </button>
+                  <button class="popup-btn change" id="pap-change">
+                    <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 1;">swap_horiz</span>
+                    Set as Default
+                  </button>
                 </div>
-                <div class="card-verified">✓ Verified</div>
-                <div class="card-year" id="card-year">2026</div>
+                <button class="popup-close" id="pap-close">✕</button>
+              </div>
+              <div class="portal-action-overlay" id="portal-action-overlay"></div>
+            </div><!-- /tab-content-portal -->
+
+          </div><!-- /returning-banner -->
+
+          <!-- NEW USER FLOW -->
+          <div id="new-user-flow" style="display:none;">
+            <button class="btn-google" id="btn-google-signin-new">
+              <svg width="18" height="18" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/><path d="M3.964 10.71a5.414 5.414 0 0 1-.282-1.71c0-.593.102-1.17.282-1.71V4.957H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.043l3.007-2.333z" fill="#FBBC05"/><path d="M9 3.579c1.32 0 2.507.454 3.44 1.345l2.582-2.58C13.463.896 11.428 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.579 9 3.579z" fill="#EA4335"/></svg>
+              Sign up with Google
+            </button>
+            <div class="divider">or create profile manually</div>
+            <div class="info-box">👋 <b>New here?</b> Your <b>Student ID</b> and <b>Registration No</b> are generated once and are <b>permanent</b> across all ThunderStudy portals.</div>
+            <div class="form-group">
+              <label class="form-label">🪪 Student ID</label>
+              <div class="row-flex">
+                <input type="text" class="form-control mono" id="form-sid" placeholder="e.g. TS-92812" maxlength="20" autocomplete="off">
+                <button class="btn-action" id="btn-gen-sid" type="button">Generate</button>
               </div>
             </div>
-          </div>
-          <div class="card-face card-back">
-            <div class="card-back-content">
-              <div>
-                <div class="card-stripe"></div>
-                <div class="back-fields">
-                  <div class="back-field"><div class="back-field-label">Exam Portal</div><div class="back-field-val" id="card-exam">—</div></div>
-                  <div class="back-field"><div class="back-field-label">Joined</div><div class="back-field-val" id="card-joined">—</div></div>
-                  <div class="back-field"><div class="back-field-label">HP</div><div class="back-field-val" id="card-hp">0</div></div>
-                  <div class="back-field"><div class="back-field-label">XP</div><div class="back-field-val" id="card-xp">0</div></div>
-                </div>
+            <div class="form-group">
+              <label class="form-label">📋 Registration No</label>
+              <div class="row-flex">
+                <input type="text" class="form-control mono" id="form-regno" placeholder="e.g. REG-2026-A1234" maxlength="24" autocomplete="off">
+                <button class="btn-action" id="btn-gen-regno" type="button">Generate</button>
               </div>
-              <div class="card-barcode" id="card-barcode"></div>
             </div>
+            <div class="form-group">
+              <label class="form-label">👤 Full Name</label>
+              <input type="text" class="form-control" id="form-name" placeholder="Enter your full name" maxlength="60" autocomplete="name">
+            </div>
+            <div class="form-group">
+              <label class="form-label">🏫 Class / Batch</label>
+              <select class="form-control" id="form-class">
+                <option value="Class 12">Class 12</option>
+                <option value="Class 11">Class 11</option>
+                <option value="Graduated / Repeater">Graduated / Repeater</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">🧑‍🎓 I am a</label>
+              <div style="display:flex;gap:10px;">
+                <label id="gender-boy" onclick="selectGender('boy')" style="flex:1;display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:13px;border:1.5px solid rgba(203,213,225,.65);background:rgba(241,245,249,.8);cursor:pointer;transition:all .2s;">
+                  <img src="boy.png" onerror="this.style.display='none';this.nextSibling.style.display='block'" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;">
+                  <span style="display:none;font-size:22px;flex-shrink:0;">👦</span>
+                  <span style="font-size:13px;font-weight:700;color:var(--on-surface);">Boy</span>
+                </label>
+                <label id="gender-girl" onclick="selectGender('girl')" style="flex:1;display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:13px;border:1.5px solid rgba(203,213,225,.65);background:rgba(241,245,249,.8);cursor:pointer;transition:all .2s;">
+                  <img src="girl.png" onerror="this.style.display='none';this.nextSibling.style.display='block'" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;">
+                  <span style="display:none;font-size:22px;flex-shrink:0;">👧</span>
+                  <span style="font-size:13px;font-weight:700;color:var(--on-surface);">Girl</span>
+                </label>
+              </div>
+            </div>
+            <button class="btn-submit primary" id="btn-start-setup" type="button">📝 Continue to Portal →</button>
+          </div><!-- /new-user-flow -->
+
+        </div><!-- /step-0 -->
+
+        <!-- ══ STEP 1: Portal Select ══ -->
+        <div class="step-panel" id="step-1">
+          <div class="ref-lock-banner" id="ref-lock-banner" style="display:none;">
+            <div style="font-size:20px;flex-shrink:0;">🔒</div>
+            <div><b>Portal auto-selected</b><br>You were referred to <span id="ref-lock-portal-name">this portal</span>. You can switch later from the dashboard.</div>
           </div>
-        </div>
-      </div>
-      <div class="card-flip-hint">👆 Click card to flip</div>
 
-      <!-- Google upgrade (only if not Google-linked) -->
-      <div id="google-upgrade-section">
-        <button class="btn-google" id="btn-google-signin">
-          <svg width="18" height="18" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/><path d="M3.964 10.71a5.414 5.414 0 0 1-.282-1.71c0-.593.102-1.17.282-1.71V4.957H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.043l3.007-2.333z" fill="#FBBC05"/><path d="M9 3.579c1.32 0 2.507.454 3.44 1.345l2.582-2.58C13.463.896 11.428 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.579 9 3.579z" fill="#EA4335"/></svg>
-          <span id="google-btn-label">Continue with Google</span>
-        </button>
-      </div>
+          <div id="portal-select-ui">
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Select Your Primary Exam Portal</label>
+              <div class="portal-grid" id="setup-portal-grid"></div>
+            </div>
+            <div style="margin:8px 0 14px;font-size:11px;color:var(--on-surface-v);text-align:center;">You can switch portals anytime from the dashboard</div>
+          </div>
 
-      <div class="portal-section-label">Choose your study portal</div>
-      <div class="portal-grid" id="returning-portal-grid"></div>
-      <div class="currency-pills">
-        <div class="cp"><div class="cp-val hp" id="cp-hp">0</div><div class="cp-label">❤️ HP</div></div>
-        <div class="cp"><div class="cp-val xp" id="cp-xp">0</div><div class="cp-label">⭐ XP</div></div>
-        <div class="cp"><div class="cp-val rp" id="cp-rp">0</div><div class="cp-label">🏆 RP</div></div>
-      </div>
-      <button class="btn-submit" id="btn-enter-returning" style="margin-top:14px;">⚡ Launch Portal</button>
-      <div style="text-align:center;margin-top:13px;">
-        <button class="btn-text danger" id="btn-reset-profile">Reset / Change Profile</button>
-      </div>
-    </div>
+          <button class="btn-glow" id="btn-finish-setup" type="button">
+            <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;font-size:20px;">bolt</span>
+            Finish & Enter Portal
+          </button>
+          <div style="text-align:center;margin-top:12px;">
+            <button class="btn-text" type="button" onclick="goStep(0)">← Back</button>
+          </div>
+        </div><!-- /step-1 -->
 
-    <!-- NEW USER FLOW -->
-    <div id="new-user-flow" style="display:none;">
-      <button class="btn-google" id="btn-google-signin-new">
-        <svg width="18" height="18" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/><path d="M3.964 10.71a5.414 5.414 0 0 1-.282-1.71c0-.593.102-1.17.282-1.71V4.957H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.043l3.007-2.333z" fill="#FBBC05"/><path d="M9 3.579c1.32 0 2.507.454 3.44 1.345l2.582-2.58C13.463.896 11.428 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.579 9 3.579z" fill="#EA4335"/></svg>
-        Sign up with Google
-      </button>
-      <div class="divider">or create profile manually</div>
+      </div><!-- /glass-card -->
+    </div><!-- /login-layout-right -->
 
-      <!-- INLINE PROFILE FORM -->
-      <div class="info-box">👋 <b>New here?</b> Your <b>Student ID</b> and <b>Registration No</b> are generated once and are <b>permanent</b> across all ThunderStudy portals.</div>
-      <div class="form-group">
-        <label class="form-label"><span class="label-icon">🪪</span> Student ID</label>
-        <div class="row-flex">
-          <input type="text" class="form-control mono" id="form-sid" placeholder="e.g. TS-92812" maxlength="20">
-          <button class="btn-action" id="btn-gen-sid">Generate</button>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label"><span class="label-icon">📋</span> Registration No</label>
-        <div class="row-flex">
-          <input type="text" class="form-control mono" id="form-regno" placeholder="e.g. REG-2026-A1234" maxlength="24">
-          <button class="btn-action" id="btn-gen-regno">Generate</button>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label"><span class="label-icon">👤</span> Full Name</label>
-        <input type="text" class="form-control" id="form-name" placeholder="Enter your full name" maxlength="60">
-      </div>
-      <div class="form-group">
-        <label class="form-label"><span class="label-icon">🏫</span> Class / Batch</label>
-        <select class="form-control" id="form-class">
-          <option value="Class 12">Class 12</option>
-          <option value="Class 11">Class 11</option>
-          <option value="Graduated / Repeater">Graduated / Repeater</option>
-          <option value="Class 10">Class 10</option>
-          <option value="Other">Other</option>
-        </select>
-      </div>
-      <button class="btn-submit" id="btn-start-setup">📝 Continue to Portal →</button>
-    </div>
-  </div>
-  </div>
+  </div><!-- /login-layout -->
+</div><!-- /page-wrap -->
 
-  <!-- ── STEP 2: PORTAL SELECT ── -->
-  <div class="step-panel" id="step-2">
-    <div class="form-group" style="margin-bottom:0;">
-      <label class="form-label">Select Your Primary Exam Portal</label>
-      <div class="portal-grid" id="setup-portal-grid"></div>
-    </div>
-    <div style="margin:10px 0 16px;font-size:11px;color:var(--text-muted);text-align:center;">
-      You can switch portals anytime after sign-in
-    </div>
-    <button class="btn-submit" id="btn-finish-setup">⚡ Finish & Enter Portal</button>
-    <div style="text-align:center;margin-top:12px;">
-      <button class="btn-text" onclick="goStep(0)">← Back</button>
-    </div>
-  </div>
-</div>
-
-<div id="toast">Saved!</div>
+<!-- Mobile bottom nav -->
+<nav style="display:none;" id="mobile-bottom-nav" class="md-hidden" aria-hidden="true">
+  <!-- hidden, no bottom nav needed for login -->
+</nav>
 
 <script>
 // ════════════════════════════════════
@@ -674,19 +810,36 @@ firebase.initializeApp(firebaseConfig);
 const fbAuth=firebase.auth(),fbProvider=new firebase.auth.GoogleAuthProvider();
 
 // ════════════════════════════════════
-//  DATA
+//  PORTALS
 // ════════════════════════════════════
 const PORTALS={
-  cuet:{name:'CUET Prep',icon:'⚡',color:'#6366f1',url:'/cuet/',local:'index (8).html',soon:false},
-  ssc:{name:'SSC Prep',icon:'🦁',color:'#f97316',url:'/ssc/',local:'index (9).html',soon:false},
-  banking:{name:'Banking',icon:'🏦',color:'#2563eb',url:'/banking/',local:'index (10).html',soon:false},
-  jee_neet:{name:'JEE & NEET',icon:'🔬',color:'#10b981',url:'/jee-neet/',local:'index (11).html',soon:false},
-  nda:{name:'NDA Prep',icon:'🎖️',color:'#f59e0b',url:null,local:null,soon:true},
-  clat:{name:'CLAT Prep',icon:'⚖️',color:'#8b5cf6',url:null,local:null,soon:true},
-  cat:{name:'CAT Prep',icon:'📈',color:'#ec4899',url:'/cat/',local:'index (12).html',soon:false},
-  ncert:{name:'NCERT Mocks',icon:'📖',color:'#06b6d4',url:null,local:null,soon:true},
+  cuet:    {name:'CUET Prep',  icon:'⚡',color:'#6366f1',url:'https://commercesehoga.github.io/cuet/',    local:'index (8).html', soon:false},
+  ssc:     {name:'SSC Prep',   icon:'🦁',color:'#f97316',url:'https://commercesehoga.github.io/ssc/',     local:'index (9).html', soon:false},
+  banking: {name:'Banking',    icon:'🏦',color:'#2563eb',url:'https://commercesehoga.github.io/banking/', local:'index (10).html',soon:false},
+  jee_neet:{name:'JEE & NEET', icon:'🔬',color:'#10b981',url:'https://commercesehoga.github.io/jee-neet/',local:'index (11).html',soon:false},
+  nda:     {name:'NDA Prep',   icon:'🎖️',color:'#f59e0b',url:null,                                        local:null,             soon:true},
+  clat:    {name:'CLAT Prep',  icon:'⚖️',color:'#8b5cf6',url:'https://commercesehoga.github.io/clat/',   local:null,             soon:false},
+  cat:     {name:'CAT Prep',   icon:'📈',color:'#ec4899',url:'https://commercesehoga.github.io/cat/',     local:'index (12).html',soon:false},
+  ncert:   {name:'NCERT Mocks',icon:'📖',color:'#06b6d4',url:null,                                        local:null,             soon:true},
 };
-const TS_KEYS={STUDENT_ID:'ts_student_id',REG_NO:'ts_reg_no',PROFILE:'ts_profile',NAME:'ts_name',HP:'ts_hp',XP_BONUS:'ts_bonus_xp',RP_DATA:'ts_rp_data',OB_DONE:'ts_ob_done',SSC_OB_DONE:'ssc_ob_done',TSB_OB_DONE:'tsb_ob_done',JN_OB_DONE:'jn_ob_done',LEGACY_NAME:'cbtUserName',LEGACY_SID:'studentId',LEGACY_SNAME:'studentName'};
+const TS_KEYS={STUDENT_ID:'ts_student_id',REG_NO:'ts_reg_no',PROFILE:'ts_profile',NAME:'ts_name',HP:'ts_hp',XP_BONUS:'ts_bonus_xp',RP_DATA:'ts_rp_data',OB_DONE:'ts_ob_done',SSC_OB_DONE:'ssc_ob_done',TSB_OB_DONE:'tsb_ob_done',JN_OB_DONE:'jn_ob_done',LEGACY_NAME:'cbtUserName',LEGACY_SID:'studentId',LEGACY_SNAME:'studentName',GENDER:'ts_gender'};
+
+// ════════════════════════════════════
+//  REF PORTAL DETECTION
+// ════════════════════════════════════
+function detectRefPortal(){
+  const params=new URLSearchParams(window.location.search);
+  let p=params.get('portal')||params.get('ref')||params.get('from')||'';
+  if(p&&PORTALS[p])return p;
+  try{const ref=document.referrer;for(const id of Object.keys(PORTALS)){if(ref.includes('/'+id)||ref.includes('='+id))return id;}}catch{}
+  const ss=sessionStorage.getItem('ts_return_portal');
+  if(ss&&PORTALS[ss])return ss;
+  return '';
+}
+
+const REF_PORTAL=detectRefPortal();
+let selectedPortal=REF_PORTAL||'cuet';
+if(REF_PORTAL)sessionStorage.setItem('ts_return_portal',REF_PORTAL);
 
 // ════════════════════════════════════
 //  HELPERS
@@ -698,14 +851,16 @@ function getName(){const p=getProfile();return p.name||localStorage.getItem(TS_K
 function getHP(){try{return JSON.parse(localStorage.getItem(TS_KEYS.HP)||'{"total":0}').total||0;}catch{return 0;}}
 function getXP(){try{return JSON.parse(localStorage.getItem(TS_KEYS.XP_BONUS)||'0');}catch{return 0;}}
 function getRP(){try{return JSON.parse(localStorage.getItem(TS_KEYS.RP_DATA)||'{"rp":0}').rp||0;}catch{return 0;}}
+function getGender(){return localStorage.getItem(TS_KEYS.GENDER)||getProfile().gender||'';}
 function isLoggedIn(){return !!(getSID()&&getRegNo()&&getName());}
 function getGoogleUser(){try{return JSON.parse(localStorage.getItem('ts_google_user')||'null');}catch{return null;}}
 function isGoogleSignedIn(){const g=getGoogleUser();return !!(g&&g.uid);}
-function getReturnPortal(){const p=new URLSearchParams(window.location.search).get('portal')||sessionStorage.getItem('ts_return_portal')||'cuet';sessionStorage.setItem('ts_return_portal',p);return p;}
-function makeSID(){return 'TS-'+Math.floor(10000+Math.random()*90000);}
+function makeSID(){const ts=Date.now().toString(36).toUpperCase().slice(-4);return 'TS-'+ts+Math.floor(100+Math.random()*900);}
 function makeRegNo(){const y=new Date().getFullYear(),l=String.fromCharCode(65+Math.floor(Math.random()*26));return 'REG-'+y+'-'+l+Math.floor(1000+Math.random()*9000);}
+
 function saveProfile(sid,regNo,name,cls,exam){
-  const prof={name,class:cls,regNo,studentId:sid,exam:exam||'cuet',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
+  const gender=localStorage.getItem(TS_KEYS.GENDER)||'';
+  const prof={name,class:cls,regNo,studentId:sid,exam:exam||'cuet',gender,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
   localStorage.setItem(TS_KEYS.PROFILE,JSON.stringify(prof));
   localStorage.setItem(TS_KEYS.STUDENT_ID,sid);localStorage.setItem(TS_KEYS.REG_NO,regNo);
   localStorage.setItem(TS_KEYS.NAME,name);localStorage.setItem(TS_KEYS.LEGACY_NAME,name);
@@ -714,28 +869,137 @@ function saveProfile(sid,regNo,name,cls,exam){
 }
 
 // ════════════════════════════════════
+//  DESKTOP HERO VISIBILITY
+// ════════════════════════════════════
+function updateHero(loggedIn){
+  const heroEl=document.querySelector('.hero-left');
+  if(!heroEl)return;
+  if(loggedIn){
+    // Swap hero text to "You're all set"
+    heroEl.querySelector('.hero-badge').innerHTML='<span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:\'FILL\' 1;">verified</span> Profile Verified';
+    heroEl.querySelector('.hero-title').innerHTML='You\'re All Set!';
+    heroEl.querySelector('.hero-subtitle').textContent='Your profile is active. Pick a portal below and launch your preparation.';
+  }
+}
+
+// ════════════════════════════════════
 //  STEPS
 // ════════════════════════════════════
-let currentStep=0,selectedPortal='cuet';
+let _pendingSid='',_pendingReg='',_pendingName='',_pendingCls='';
+
 function goStep(n){
   document.querySelectorAll('.step-panel').forEach((p,i)=>p.classList.toggle('active',i===n));
-  // Map step number to dot index (steps 0,2 -> dot indices 0,1)
-  const dotMap={0:0,2:1};
-  document.querySelectorAll('.step-dot').forEach((d,i)=>{d.classList.remove('active','done');if(dotMap[n]===i)d.classList.add('active');else if(i<dotMap[n])d.classList.add('done');});
-  currentStep=n;if(n===2)buildPortalGrid('setup-portal-grid');
+  const dots=document.querySelectorAll('.step-dot');
+  dots.forEach((d,i)=>{d.classList.remove('active','done');if(i===n)d.classList.add('active');else if(i<n)d.classList.add('done');});
+  if(n===1)buildPortalStep();
 }
+
+function buildPortalStep(){
+  const banner=document.getElementById('ref-lock-banner');
+  const ui=document.getElementById('portal-select-ui');
+  if(!banner||!ui)return; // guard: elements not in DOM yet
+  if(REF_PORTAL&&PORTALS[REF_PORTAL]&&!PORTALS[REF_PORTAL].soon){
+    banner.style.display='flex';ui.style.display='none';
+    const rlpn=document.getElementById('ref-lock-portal-name');
+    if(rlpn)rlpn.textContent=PORTALS[REF_PORTAL].name;
+    selectedPortal=REF_PORTAL;
+    const bfs=document.getElementById('btn-finish-setup');
+    if(bfs)bfs.innerHTML='<span class="material-symbols-outlined" style="font-variation-settings:\'FILL\' 1;font-size:20px;">bolt</span> Enter '+PORTALS[REF_PORTAL].name+' →';
+  } else {
+    banner.style.display='none';ui.style.display='block';
+    buildPortalGrid('setup-portal-grid');
+  }
+}
+
 function buildPortalGrid(cid){
   const c=document.getElementById(cid);if(!c)return;
   c.innerHTML=Object.entries(PORTALS).map(([id,p])=>`
     <div class="portal-card${id===selectedPortal?' active':''}${p.soon?' soon':''}"
-      onclick="${p.soon?`showToast('${p.name} coming soon!')`:''};if(!${p.soon})selectPortal('${id}',this)">
+      ${p.soon?`onclick="showToast('${p.name} coming soon!')"`:!p.soon?`onclick="selectPortal('${id}',this)"`:''}
+      role="button" tabindex="0">
       ${p.soon?'<div class="portal-badge">Soon</div>':''}
       <div class="portal-icon">${p.icon}</div>
       <div class="portal-name">${p.name}</div>
     </div>`).join('');
 }
+
+// ─── FULL PORTAL GRID (returning screen) ───
+function buildFullPortalGrid(cid){
+  const c=document.getElementById(cid);if(!c)return;
+  const currentDefault=getProfile().exam||selectedPortal||'cuet';
+  c.innerHTML=Object.entries(PORTALS).map(([id,p])=>`
+    <div class="pf-card${id===currentDefault?' is-default':''}${p.soon?' soon-card':''}"
+      onclick="${p.soon?`showToast('${p.name} coming soon!')`:`openPortalAction('${id}')`}"
+      role="button" tabindex="0">
+      ${id===currentDefault?'<div class="pf-default-dot"></div>':''}
+      ${p.soon?'<div class="pf-soon-tag">Soon</div>':''}
+      <div class="pf-card-icon">${p.icon}</div>
+      <div class="pf-card-name">${p.name}</div>
+      <div class="pf-card-sub">${id===currentDefault?'Default':'Tap to open'}</div>
+    </div>`).join('');
+}
+
+// ─── PORTAL ACTION POPUP ───
+let _papPortalId='';
+function openPortalAction(id){
+  if(!PORTALS[id])return;
+  _papPortalId=id;
+  const p=PORTALS[id];
+  const currentDefault=getProfile().exam||selectedPortal||'cuet';
+  document.getElementById('pap-icon').textContent=p.icon;
+  document.getElementById('pap-name').textContent=p.name;
+  const defTag=document.getElementById('pap-default-tag');
+  const changeBtn=document.getElementById('pap-change');
+  if(id===currentDefault){
+    defTag.style.display='inline-block';
+    changeBtn.style.opacity='.45';changeBtn.style.pointerEvents='none';
+    changeBtn.innerHTML='<span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:\'FILL\' 1;">check_circle</span> Already Default';
+  } else {
+    defTag.style.display='none';
+    changeBtn.style.opacity='1';changeBtn.style.pointerEvents='auto';
+    changeBtn.innerHTML='<span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:\'FILL\' 1;">swap_horiz</span> Set as Default';
+  }
+  document.getElementById('portal-action-popup').classList.add('open');
+  document.getElementById('portal-action-overlay').classList.add('open');
+}
+function closePortalAction(){
+  document.getElementById('portal-action-popup').classList.remove('open');
+  document.getElementById('portal-action-overlay').classList.remove('open');
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('pap-close')?.addEventListener('click',closePortalAction);
+  document.getElementById('portal-action-overlay')?.addEventListener('click',closePortalAction);
+  document.getElementById('pap-start')?.addEventListener('click',()=>{
+    closePortalAction();
+    showToast('⚡ Launching '+PORTALS[_papPortalId]?.name+'…');
+    setTimeout(()=>redirectToPortal(_papPortalId),600);
+  });
+  document.getElementById('pap-change')?.addEventListener('click',()=>{
+    if(!_papPortalId||PORTALS[_papPortalId]?.soon)return;
+    const prof=getProfile();
+    prof.exam=_papPortalId;prof.updatedAt=new Date().toISOString();
+    localStorage.setItem(TS_KEYS.PROFILE,JSON.stringify(prof));
+    selectedPortal=_papPortalId;
+    // Update card
+    const pName=(PORTALS[_papPortalId]?.name||_papPortalId).toUpperCase();
+    if(document.getElementById('card-exam'))document.getElementById('card-exam').textContent=pName;
+    if(document.getElementById('card-portal-badge'))document.getElementById('card-portal-badge').textContent=pName;
+    // Update QR on back
+    const qrCanvas=document.getElementById('card-qr-canvas');
+    const qrUrlEl=document.getElementById('card-qr-url');
+    const portalUrl=PORTALS[_papPortalId]?.url||'https://commercesehoga.github.io/cuet/';
+    if(qrUrlEl){try{const u=new URL(portalUrl);qrUrlEl.textContent=u.host.replace('www.','')+(u.pathname!=='/'?u.pathname:'');}catch{qrUrlEl.textContent=portalUrl;}}
+    if(qrCanvas)drawSimpleQR(qrCanvas,portalUrl+'?id='+encodeURIComponent(getSID()));
+    // Rebuild grid
+    buildFullPortalGrid('returning-portal-grid');
+    closePortalAction();
+    showToast('✅ Default set: '+PORTALS[_papPortalId]?.name,'success');
+  });
+});
+
 function selectPortal(id,el){
-  if(PORTALS[id].soon)return;
+  if(!PORTALS[id]||PORTALS[id].soon)return;
+  if(REF_PORTAL)return;
   selectedPortal=id;
   el.closest('.portal-grid').querySelectorAll('.portal-card').forEach(c=>c.classList.remove('active'));
   el.classList.add('active');
@@ -744,22 +1008,44 @@ function selectPortal(id,el){
 // ════════════════════════════════════
 //  REDIRECT
 // ════════════════════════════════════
-function redirectAfterLogin(){redirectToPortal(getReturnPortal()||selectedPortal);}
+function redirectAfterLogin(){
+  const target=REF_PORTAL||getProfile().exam||selectedPortal||'cuet';
+  redirectToPortal(target);
+}
 function redirectToPortal(portalId){
-  const cfg=PORTALS[portalId||selectedPortal];
+  const cfg=PORTALS[portalId||'cuet'];
   if(!cfg||cfg.soon){showToast((cfg?cfg.name+' ':'Portal ')+'coming soon!');return;}
   showToast('⚡ Launching '+cfg.name+'…');
   sessionStorage.removeItem('ts_return_portal');
   setTimeout(()=>{
     const isLocal=window.location.protocol==='file:';
     if(isLocal&&cfg.local){const base=window.location.pathname.substring(0,window.location.pathname.lastIndexOf('/'));window.location.href=window.location.origin+base+'/'+cfg.local;}
-    else if(cfg.url){window.location.href='https://commercesehoga.github.io'+cfg.url;}
+    else if(cfg.url){window.location.href=cfg.url;}
     else showToast('Portal not available yet.');
   },700);
 }
 
 // ════════════════════════════════════
-//  3D ID CARD
+//  QR CODE (tiny inline generator — no lib needed)
+// ════════════════════════════════════
+function drawSimpleQR(canvas,text){
+  const ctx=canvas.getContext('2d');
+  canvas.width=44;canvas.height=44;
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,44,44);
+  const seed=text.split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+  const modules=21;const size=Math.floor(44/modules);
+  function drawFinder(x,y){ctx.fillStyle='#1e293b';for(let i=0;i<7;i++)for(let j=0;j<7;j++){if(i===0||i===6||j===0||j===6||(i>=2&&i<=4&&j>=2&&j<=4))ctx.fillRect((x+j)*size,(y+i)*size,size,size);}}
+  drawFinder(0,0);drawFinder(modules-7,0);drawFinder(0,modules-7);
+  let r=seed;
+  for(let i=0;i<modules;i++){for(let j=0;j<modules;j++){
+    if((i<8&&j<8)||(i<8&&j>=modules-8)||(i>=modules-8&&j<8))continue;
+    r=(r*1103515245+12345)&0x7fffffff;
+    if(r%3===0){ctx.fillStyle='#1e293b';ctx.fillRect(j*size,i*size,size,size);}
+  }}
+}
+
+// ════════════════════════════════════
+//  ID CARD
 // ════════════════════════════════════
 function buildIDCard(){
   const prof=getProfile(),name=getName()||'Student',sid=getSID(),reg=getRegNo(),gu=getGoogleUser();
@@ -768,22 +1054,55 @@ function buildIDCard(){
   if(!prof.class)missing.push({key:'class',label:'Class/Batch',type:'select'});
   if(missing.length>0){showFillModal(missing,()=>buildIDCard());return;}
   const init=name.trim()[0]?.toUpperCase()||'?';
+  const gender=getGender();
   const ca=document.getElementById('card-avatar');
-  if(gu&&gu.picture){ca.innerHTML=`<img src="${gu.picture}" style="width:56px;height:56px;object-fit:cover;" onerror="this.parentElement.textContent='${init}'" alt="">`;}
-  else ca.textContent=init;
+  if(gu&&gu.picture){
+    ca.classList.remove('initials-box');
+    ca.innerHTML=`<img src="${gu.picture}" style="width:52px;height:52px;object-fit:cover;border-radius:50%;" onerror="this.parentElement.textContent='${init}'" alt="">`;
+  } else if(gender==='boy'){
+    ca.classList.remove('initials-box');
+    ca.innerHTML=`<img src="boy.png" style="width:52px;height:52px;object-fit:cover;border-radius:50%;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt=""><span style="display:none;font-size:32px;line-height:1;align-items:center;justify-content:center;">👦</span>`;
+  } else if(gender==='girl'){
+    ca.classList.remove('initials-box');
+    ca.innerHTML=`<img src="girl.png" style="width:52px;height:52px;object-fit:cover;border-radius:50%;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt=""><span style="display:none;font-size:32px;line-height:1;align-items:center;justify-content:center;">👧</span>`;
+  } else {
+    ca.classList.add('initials-box');
+    ca.textContent=init;
+  }
   document.getElementById('card-name').textContent=name;
   document.getElementById('card-class').textContent=prof.class||'—';
   document.getElementById('card-sid').textContent=sid||'—';
   document.getElementById('card-reg').textContent=reg||'—';
   document.getElementById('card-year').textContent=new Date().getFullYear();
+
+  // Back — Exam Portal
   const examKey=prof.exam||'cuet';
-  document.getElementById('card-exam').textContent=(PORTALS[examKey]?.name||examKey).toUpperCase();
-  const joined=prof.createdAt?new Date(prof.createdAt).toLocaleDateString('en-IN',{month:'short',year:'numeric'}):'—';
-  document.getElementById('card-joined').textContent=joined;
+  const portalName=(PORTALS[examKey]?.name||examKey).toUpperCase();
+  document.getElementById('card-exam').textContent=portalName;
+  document.getElementById('card-portal-badge').textContent=portalName;
+
+  // Back — HP, XP, RP, Rank
   document.getElementById('card-hp').textContent=getHP();
   document.getElementById('card-xp').textContent=getXP();
-  const bc=document.getElementById('card-barcode');
-  if(sid){let b='';for(let i=0;i<sid.length;i++){const c=sid.charCodeAt(i);b+=`<div class="bar" style="width:${Math.max(2,c%4+2)}px;height:${Math.max(18,c%14+20)}px;opacity:${.4+.6*(c%3)/2}"></div><div style="width:${c%3+1}px"></div>`;}bc.innerHTML=b;}
+  const _rpEl=document.getElementById('card-rp');if(_rpEl)_rpEl.textContent=getRP();
+  // Rank from ts_rp_data
+  const _rankEl=document.getElementById('card-rank');
+  if(_rankEl){try{const _rpObj=JSON.parse(localStorage.getItem('ts_rp_data')||'{}');_rankEl.textContent=_rpObj.rank?'#'+_rpObj.rank:(getRP()>0?'#'+Math.max(1,Math.ceil(1000/Math.max(1,getRP()))):'—');}catch{_rankEl.textContent='—';}}
+
+  // Back — Joined
+  const joined=prof.createdAt?new Date(prof.createdAt).toLocaleDateString('en-IN',{month:'short',year:'numeric'}):'—';
+  const joinedEl=document.getElementById('card-joined-back');
+  if(joinedEl)joinedEl.textContent='Joined '+joined;
+
+  // Back — QR code pointing to the portal website URL
+  const portalUrl=(PORTALS[examKey]?.url)||'https://commercesehoga.github.io/cuet/';
+  const qrUrlEl=document.getElementById('card-qr-url');
+  if(qrUrlEl){
+    try{const u=new URL(portalUrl);qrUrlEl.textContent=u.host.replace('www.','')+(u.pathname!=='/'?u.pathname:'');}catch{qrUrlEl.textContent=portalUrl;}
+  }
+  const qrCanvas=document.getElementById('card-qr-canvas');
+  if(qrCanvas)drawSimpleQR(qrCanvas,portalUrl+(sid?'?id='+encodeURIComponent(sid):''));
+
   document.getElementById('card-scene').onclick=()=>document.getElementById('id-card').classList.toggle('flipped');
 }
 
@@ -793,7 +1112,7 @@ function buildIDCard(){
 function showFillModal(fields,cb){
   const modal=document.getElementById('fill-modal'),fc=document.getElementById('fill-modal-fields');
   fc.innerHTML=fields.map(f=>f.type==='select'
-    ?`<div class="form-group" style="margin-bottom:14px;"><label class="form-label">${f.label}</label><select class="form-control" id="fill-${f.key}"><option>Class 12</option><option>Class 11</option><option>Graduated / Repeater</option><option>Class 10</option><option>Other</option></select></div>`
+    ?`<div class="form-group" style="margin-bottom:14px;"><label class="form-label">${f.label}</label><select class="form-control" id="fill-${f.key}"><option>Class 12</option><option>Class 11</option><option>Graduated / Repeater</option><option>Other</option></select></div>`
     :`<div class="form-group" style="margin-bottom:14px;"><label class="form-label">${f.label}</label><input type="text" class="form-control" id="fill-${f.key}" placeholder="Enter ${f.label}"></div>`
   ).join('');
   modal.classList.add('open');
@@ -811,26 +1130,56 @@ function showFillModal(fields,cb){
 // ════════════════════════════════════
 function renderReturning(){
   const prof=getProfile(),name=getName()||'Student',sid=getSID(),gu=getGoogleUser();
-  const returnPortal=getReturnPortal(),exam=returnPortal||prof.exam||'cuet';
-  document.getElementById('returning-banner').style.display='block';
-  document.getElementById('new-user-flow').style.display='none';
-  document.getElementById('screen-subtitle').textContent='Welcome back — your profile is ready.';
+  const exam=REF_PORTAL||prof.exam||'cuet';
+  document.body.classList.add('profile-ready');
+  const _rb=document.getElementById('returning-banner');if(_rb)_rb.style.display='block';
+  const _nuf=document.getElementById('new-user-flow');if(_nuf)_nuf.style.display='none';
+  const _ss=document.getElementById('screen-subtitle');if(_ss)_ss.textContent='Welcome back — your profile is ready.';
+  // Show "You're All Set" badge on desktop
+  const asd=document.getElementById('all-set-desktop');
+  if(asd)asd.style.display=window.innerWidth>=900?'inline-flex':'none';
+
   const avatarEl=document.getElementById('profile-avatar-el');
-  if(gu&&gu.picture){avatarEl.innerHTML=`<img src="${gu.picture}" style="width:50px;height:50px;border-radius:15px;object-fit:cover;" onerror="this.parentElement.textContent='${name.trim()[0]?.toUpperCase()||'?'}'" alt="">`;}
+  const gender=getGender();
+  if(gu&&gu.picture){avatarEl.classList.remove('initials-box');avatarEl.innerHTML=`<img src="${gu.picture}" style="width:50px;height:50px;border-radius:15px;object-fit:cover;" onerror="this.parentElement.textContent='${name.trim()[0]?.toUpperCase()||'?'}'" alt="">`;}
+  else if(gender==='boy'){avatarEl.classList.remove('initials-box');avatarEl.innerHTML=`<img src="boy.png" style="width:50px;height:50px;border-radius:15px;object-fit:cover;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt=""><span style="display:none;font-size:28px;line-height:1;align-items:center;justify-content:center;">👦</span>`;}
+  else if(gender==='girl'){avatarEl.classList.remove('initials-box');avatarEl.innerHTML=`<img src="girl.png" style="width:50px;height:50px;border-radius:15px;object-fit:cover;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt=""><span style="display:none;font-size:28px;line-height:1;align-items:center;justify-content:center;">👧</span>`;}
   else avatarEl.textContent=name.trim()[0]?.toUpperCase()||'?';
   document.getElementById('profile-banner-name').textContent=name;
   document.getElementById('profile-banner-meta').textContent=(prof.class||'ThunderStudy')+' · '+sid;
   const badge=document.getElementById('profile-badge');
   if(isGoogleSignedIn()){badge.textContent='🔵 Google Synced';badge.style.cssText='background:rgba(66,133,244,.1);color:#2563eb;border-color:rgba(66,133,244,.2);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;padding:3px 8px;border-radius:6px;margin-top:5px;display:inline-block;border:1px solid rgba(66,133,244,.2)';}
   const lnEl=document.getElementById('local-done-notice'),gsEl=document.getElementById('google-upgrade-section');
-  if(!isGoogleSignedIn()){lnEl.style.display='flex';gsEl.style.display='block';document.getElementById('google-btn-label').textContent='Link Google Account';}
-  else{lnEl.style.display='none';gsEl.style.display='none';}
+  if(!isGoogleSignedIn()){
+    if(lnEl)lnEl.style.display='flex';
+    if(gsEl)gsEl.style.display='block';
+    const gbl=document.getElementById('google-btn-label');
+    if(gbl)gbl.textContent='Link Google Account';
+  } else {
+    if(lnEl)lnEl.style.display='none';
+    if(gsEl)gsEl.style.display='none';
+  }
   document.getElementById('cp-hp').textContent=getHP();
   document.getElementById('cp-xp').textContent=getXP();
   document.getElementById('cp-rp').textContent=getRP();
-  selectedPortal=exam;buildPortalGrid('returning-portal-grid');
-  document.getElementById('step-bar').style.display='none';
+  selectedPortal=exam;
+
+  // Portal grid
+  const rpg=document.getElementById('returning-portal-grid');
+  if(REF_PORTAL&&PORTALS[REF_PORTAL]&&!PORTALS[REF_PORTAL].soon){
+    rpg.innerHTML=`<div class="portal-card locked-portal" style="grid-column:span 2;display:flex;align-items:center;gap:12px;text-align:left;padding:14px 16px;">
+      <div class="portal-icon" style="font-size:28px;margin-bottom:0;">${PORTALS[REF_PORTAL].icon}</div>
+      <div><div class="portal-name" style="font-size:13px;font-weight:800;color:var(--on-surface);margin-bottom:3px;">${PORTALS[REF_PORTAL].name}</div><div style="font-size:11px;color:var(--on-surface-v);">Referred portal — active</div></div>
+      <div class="locked-badge" style="position:static;margin-left:auto;">Active</div>
+    </div>`;
+  } else {
+    buildFullPortalGrid('returning-portal-grid');
+  }
+
+  const _sb=document.getElementById('step-bar');if(_sb)_sb.style.display='none';
+  updateHero(true);
   buildIDCard();
+  setupReturnBanner();
 }
 
 // ════════════════════════════════════
@@ -842,14 +1191,25 @@ async function doGoogleSignIn(btn){
   try{
     const r=await fbAuth.signInWithPopup(fbProvider),u=r.user;
     const gu={name:u.displayName||'',email:u.email||'',picture:u.photoURL||'',uid:u.uid,provider:'google'};
-    localStorage.setItem('ts_google_user',JSON.stringify(gu));localStorage.setItem('cbtUserName',gu.name);
+    localStorage.setItem('ts_google_user',JSON.stringify(gu));
+    localStorage.setItem('cbtUserName',gu.name);
     if(!isLoggedIn()){
-      saveProfile('G-'+u.uid.substring(0,8).toUpperCase(),makeRegNo(),u.displayName||'Student','Class 12',getReturnPortal());
-      showToast('✅ Welcome, '+(u.displayName||'Student')+'!','success');
+      _pendingSid='G-'+u.uid.substring(0,8).toUpperCase();
+      _pendingReg=makeRegNo();_pendingName=u.displayName||'Student';_pendingCls='Class 12';
+      btn.disabled=false;btn.innerHTML=orig;
+      showToast('✅ Google connected — '+_pendingName,'success');
+      if(REF_PORTAL&&PORTALS[REF_PORTAL]&&!PORTALS[REF_PORTAL].soon){
+        saveProfile(_pendingSid,_pendingReg,_pendingName,_pendingCls,REF_PORTAL);
+        showToast('⚡ Setting up your profile…','success');
+        renderReturning();goStep(0);
+        setTimeout(()=>redirectAfterLogin(),1800);
+      } else {
+        goStep(1);
+      }
     } else {
       showToast('🔵 Google linked as '+gu.name,'success');
+      setTimeout(()=>location.reload(),900);
     }
-    setTimeout(()=>location.reload(),900);
   }catch(e){
     btn.disabled=false;btn.innerHTML=orig;
     if(e.code!=='auth/popup-closed-by-user')showToast('❌ '+e.message,'error');
@@ -859,72 +1219,216 @@ async function doGoogleSignIn(btn){
 // ════════════════════════════════════
 //  EVENTS
 // ════════════════════════════════════
-document.getElementById('btn-google-signin').onclick=function(){doGoogleSignIn(this);};
-document.getElementById('btn-google-signin-new').onclick=function(){doGoogleSignIn(this);};
-// Auto-fill & lock fields from localStorage
+const _bgs=document.getElementById('btn-google-signin');if(_bgs)_bgs.onclick=function(){doGoogleSignIn(this);};
+const _bgsn=document.getElementById('btn-google-signin-new');if(_bgsn)_bgsn.onclick=function(){doGoogleSignIn(this);};
+
 function setupFormFields(){
-  const sidInput=document.getElementById('form-sid');
-  const regInput=document.getElementById('form-regno');
-  const nameInput=document.getElementById('form-name');
-  const genSid=document.getElementById('btn-gen-sid');
-  const genReg=document.getElementById('btn-gen-regno');
-  // Pull saved values from all known localStorage keys
+  const sidInput=document.getElementById('form-sid'),regInput=document.getElementById('form-regno'),nameInput=document.getElementById('form-name');
+  if(!sidInput||!regInput)return; // form not present in DOM
+  const genSid=document.getElementById('btn-gen-sid'),genReg=document.getElementById('btn-gen-regno');
   const savedSid=localStorage.getItem('ts_student_id')||localStorage.getItem('studentId')||'';
   const savedReg=localStorage.getItem('ts_reg_no')||'';
-  let savedName='';
-  try{const p=JSON.parse(localStorage.getItem('ts_profile')||'{}');savedName=p.name||'';}catch{}
+  let savedName='';try{const p=JSON.parse(localStorage.getItem('ts_profile')||'{}');savedName=p.name||'';}catch{}
   if(!savedName)savedName=localStorage.getItem('ts_name')||localStorage.getItem('cbtUserName')||localStorage.getItem('studentName')||'';
-  // Fill and lock Student ID
-  if(savedSid&&sidInput){sidInput.value=savedSid;sidInput.disabled=true;if(genSid)genSid.style.display='none';}
-  // Fill and lock Reg No
-  if(savedReg&&regInput){regInput.value=savedReg;regInput.disabled=true;if(genReg)genReg.style.display='none';}
-  // Fill name (not locked, user may want to edit)
+  if(savedSid){sidInput.value=savedSid;sidInput.disabled=true;if(genSid)genSid.style.display='none';}
+  if(savedReg){regInput.value=savedReg;regInput.disabled=true;if(genReg)genReg.style.display='none';}
   if(savedName&&nameInput)nameInput.value=savedName;
-  // Generate SID on click (only if not already saved)
-  if(genSid&&!savedSid){
-    genSid.onclick=function(){
-      const v=makeSID();sidInput.value=v;sidInput.disabled=true;this.style.display='none';showToast('Generated: '+v);
-    };
-  }
-  // Generate Reg No on click (only if not already saved)
-  if(genReg&&!savedReg){
-    genReg.onclick=function(){
-      const v=makeRegNo();regInput.value=v;regInput.disabled=true;this.style.display='none';showToast('Generated: '+v);
-    };
+  if(genSid&&!savedSid){genSid.onclick=function(){const v=makeSID();sidInput.value=v;sidInput.disabled=true;this.style.display='none';showToast('Generated: '+v);};}
+  if(genReg&&!savedReg){genReg.onclick=function(){const v=makeRegNo();regInput.value=v;regInput.disabled=true;this.style.display='none';showToast('Generated: '+v);};}
+}
+function selectGender(g){
+  localStorage.setItem(TS_KEYS.GENDER,g);
+  const boy=document.getElementById('gender-boy');
+  const girl=document.getElementById('gender-girl');
+  if(boy&&girl){
+    boy.style.cssText=g==='boy'?'flex:1;display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:13px;border:2px solid var(--primary);background:rgba(70,72,212,.08);cursor:pointer;transition:all .2s;':'flex:1;display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:13px;border:1.5px solid rgba(203,213,225,.65);background:rgba(241,245,249,.8);cursor:pointer;transition:all .2s;';
+    girl.style.cssText=g==='girl'?'flex:1;display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:13px;border:2px solid var(--primary);background:rgba(70,72,212,.08);cursor:pointer;transition:all .2s;':'flex:1;display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:13px;border:1.5px solid rgba(203,213,225,.65);background:rgba(241,245,249,.8);cursor:pointer;transition:all .2s;';
   }
 }
+// restore gender selection on load
+(function restoreGender(){const g=localStorage.getItem('ts_gender');if(g)setTimeout(()=>selectGender(g),0);})();
+
 setupFormFields();
 
-// 'Continue to Portal' validates inline form then goes to portal select
-document.getElementById('btn-start-setup').onclick=()=>{
+// Step 0 → Step 1 (always goes to portal select, never auto-redirects on local)
+const _btnStart=document.getElementById('btn-start-setup');
+if(_btnStart)_btnStart.onclick=()=>{
   const sid=document.getElementById('form-sid').value.trim();
   const reg=document.getElementById('form-regno').value.trim();
   const name=document.getElementById('form-name').value.trim();
   if(!sid)return showToast('Please enter or generate a Student ID','error');
   if(!reg)return showToast('Please enter or generate a Registration No','error');
   if(!name)return showToast('Please enter your full name','error');
-  goStep(2);
+  _pendingSid=sid;_pendingReg=reg;_pendingName=name;
+  _pendingCls=document.getElementById('form-class').value;
+  // Always go to portal select — do NOT auto-skip even with REF_PORTAL
+  // (ref portal is only applied for Google sign-in auto-flow)
+  if(REF_PORTAL&&PORTALS[REF_PORTAL]&&!PORTALS[REF_PORTAL].soon){
+    // For ref portal: pre-save but still show portal step so user knows where they're going
+    goStep(1);
+  } else {
+    goStep(1);
+  }
 };
 
-document.getElementById('btn-finish-setup').onclick=()=>{
-  const sid=document.getElementById('form-sid').value.trim(),reg=document.getElementById('form-regno').value.trim(),name=document.getElementById('form-name').value.trim(),cls=document.getElementById('form-class').value;
-  if(!sid||!reg||!name){showToast('Missing profile info!','error');goStep(0);return;}
-  saveProfile(sid,reg,name,cls,selectedPortal);
+// Step 1 → Finish
+const _btnFinish=document.getElementById('btn-finish-setup');
+if(_btnFinish)_btnFinish.onclick=()=>{
+  if(!_pendingSid||!_pendingReg||!_pendingName){showToast('Missing info — please start again','error');goStep(0);return;}
+  const portalToSave=REF_PORTAL&&PORTALS[REF_PORTAL]&&!PORTALS[REF_PORTAL].soon?REF_PORTAL:selectedPortal;
+  saveProfile(_pendingSid,_pendingReg,_pendingName,_pendingCls,portalToSave);
   showToast('✅ Profile created!','success');
-  renderReturning();
-  goStep(0);
+  renderReturning();goStep(0);
   setTimeout(()=>redirectAfterLogin(),2200);
 };
-document.getElementById('btn-enter-returning').onclick=()=>redirectAfterLogin();
-document.getElementById('btn-reset-profile').onclick=()=>{
+
+const _btnEnter=document.getElementById('btn-enter-returning');if(_btnEnter)_btnEnter.onclick=()=>redirectAfterLogin();
+const _btnReset=document.getElementById('btn-reset-profile');if(_btnReset)_btnReset.onclick=()=>{
   if(!confirm('Reset profile? Student ID and Registration No will be cleared.\n\nThis cannot be undone.'))return;
   [TS_KEYS.STUDENT_ID,TS_KEYS.REG_NO,TS_KEYS.PROFILE,TS_KEYS.NAME,TS_KEYS.LEGACY_NAME,TS_KEYS.LEGACY_SID,TS_KEYS.LEGACY_SNAME,'ts_google_user'].forEach(k=>localStorage.removeItem(k));
   location.reload();
 };
 
 // ════════════════════════════════════
-//  TOAST
+//  TABS (Profile / Portal)
 // ════════════════════════════════════
+function switchTab(tab){
+  const profileContent=document.getElementById('tab-content-profile');
+  const portalContent=document.getElementById('tab-content-portal');
+  const profileBtn=document.getElementById('tab-profile-btn');
+  const portalBtn=document.getElementById('tab-portal-btn');
+  const navProfileLink=document.getElementById('nav-profile-link');
+  const navPortalLink=document.getElementById('nav-portal-link');
+  const bnavProfile=document.getElementById('bnav-profile');
+  const bnavPortal=document.getElementById('bnav-portal');
+
+  if(tab==='portal'){
+    if(profileContent)profileContent.style.display='none';
+    if(portalContent)portalContent.style.display='block';
+    if(profileBtn)profileBtn.classList.remove('active');
+    if(portalBtn)portalBtn.classList.add('active');
+    if(navProfileLink)navProfileLink.classList.remove('active');
+    if(navPortalLink)navPortalLink.classList.add('active');
+    if(bnavProfile){bnavProfile.classList.remove('active');}
+    if(bnavPortal){bnavPortal.classList.add('active');}
+    buildFullPortalGrid('returning-portal-grid');
+  } else {
+    if(profileContent)profileContent.style.display='block';
+    if(portalContent)portalContent.style.display='none';
+    if(profileBtn)profileBtn.classList.add('active');
+    if(portalBtn)portalBtn.classList.remove('active');
+    if(navProfileLink)navProfileLink.classList.add('active');
+    if(navPortalLink)navPortalLink.classList.remove('active');
+    if(bnavProfile){bnavProfile.classList.add('active');}
+    if(bnavPortal){bnavPortal.classList.remove('active');}
+  }
+}
+
+// ════════════════════════════════════
+//  RETURN BANNER (back to referring portal)
+// ════════════════════════════════════
+function setupReturnBanner(){
+  const banner=document.getElementById('return-banner');
+  const nameEl=document.getElementById('return-banner-name');
+  const urlEl=document.getElementById('return-banner-url');
+  const btn=document.getElementById('return-banner-btn');
+  if(!banner)return;
+
+  // Detect: referrer URL, or ?from= param, or session storage portal
+  let returnUrl='';
+  let returnName='';
+
+  // Check if we came from a known portal via referrer
+  try{
+    const ref=document.referrer;
+    if(ref){
+      for(const [id,p] of Object.entries(PORTALS)){
+        if(p.url&&ref.startsWith(p.url.replace(/\/$/,''))){
+          returnUrl=ref;returnName=p.name;break;
+        }
+        // also check subdomain path match
+        if(p.url&&ref.includes(new URL(p.url).pathname.split('/')[1]||'')){
+          returnUrl=p.url;returnName=p.name;
+        }
+      }
+      // Fallback: any github.io referrer we don't know
+      if(!returnName&&ref.includes('commercesehoga.github.io')&&!ref.includes('index')){
+        returnUrl=ref;returnName='Study Portal';
+      }
+    }
+  }catch{}
+
+  // Also check URL param ?from=portalId or ?back=url
+  const params=new URLSearchParams(window.location.search);
+  const fromParam=params.get('from')||params.get('back')||params.get('ref');
+  if(fromParam){
+    if(PORTALS[fromParam]&&PORTALS[fromParam].url){
+      returnUrl=PORTALS[fromParam].url;returnName=PORTALS[fromParam].name;
+    } else if(fromParam.startsWith('http')){
+      returnUrl=fromParam;returnName='Study Portal';
+    }
+  }
+
+  // Also check REF_PORTAL (set earlier from portal param)
+  if(!returnUrl&&REF_PORTAL&&PORTALS[REF_PORTAL]?.url){
+    returnUrl=PORTALS[REF_PORTAL].url;returnName=PORTALS[REF_PORTAL].name;
+  }
+
+  if(returnUrl&&returnName){
+    nameEl.textContent='← Back to '+returnName;
+    try{urlEl.textContent=new URL(returnUrl).hostname.replace('www.','');}catch{urlEl.textContent=returnUrl;}
+    banner.style.display='flex';
+    banner.onclick=()=>{window.location.href=returnUrl;};
+    btn.onclick=(e)=>{e.stopPropagation();window.location.href=returnUrl;};
+  }
+}
+
+
+let _modalSelectedPortal=selectedPortal||'cuet';
+function openPortalSelector(){
+  const modal=document.getElementById('portal-selector-modal');
+  if(!modal)return;
+  const grid=document.getElementById('modal-portal-grid');
+  if(grid){
+    _modalSelectedPortal=getProfile().exam||selectedPortal||'cuet';
+    grid.innerHTML=Object.entries(PORTALS).map(([id,p])=>`
+      <div class="portal-card${id===_modalSelectedPortal?' active':''}${p.soon?' soon':''}"
+        ${p.soon?`onclick="showToast('${p.name} coming soon!')"`:!p.soon?`onclick="selectModalPortal('${id}',this)"`:''}
+        role="button" tabindex="0">
+        ${p.soon?'<div class="portal-badge">Soon</div>':''}
+        <div class="portal-icon">${p.icon}</div>
+        <div class="portal-name">${p.name}</div>
+      </div>`).join('');
+  }
+  modal.classList.add('open');
+  const saveBtn=document.getElementById('portal-modal-save');
+  if(saveBtn)saveBtn.onclick=()=>{
+    // Save portal choice to profile
+    const prof=getProfile();
+    prof.exam=_modalSelectedPortal;
+    prof.updatedAt=new Date().toISOString();
+    localStorage.setItem(TS_KEYS.PROFILE,JSON.stringify(prof));
+    selectedPortal=_modalSelectedPortal;
+    modal.classList.remove('open');
+    showToast('⚡ Portal locked: '+(PORTALS[_modalSelectedPortal]?.name||_modalSelectedPortal),'success');
+    // Update card portal badge
+    if(document.getElementById('card-exam'))document.getElementById('card-exam').textContent=(PORTALS[_modalSelectedPortal]?.name||_modalSelectedPortal).toUpperCase();
+    if(document.getElementById('card-portal-badge'))document.getElementById('card-portal-badge').textContent=(PORTALS[_modalSelectedPortal]?.name||_modalSelectedPortal).toUpperCase();
+    // Rebuild portal grid
+    buildFullPortalGrid('returning-portal-grid');
+    setTimeout(()=>redirectToPortal(_modalSelectedPortal),800);
+  };
+}
+function selectModalPortal(id,el){
+  if(!PORTALS[id]||PORTALS[id].soon)return;
+  _modalSelectedPortal=id;
+  el.closest('.portal-grid').querySelectorAll('.portal-card').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+}
+// Close modal on overlay click
+document.getElementById('portal-selector-modal')?.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+
+
 let _tt;
 function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className=type?'show '+type:'show';clearTimeout(_tt);_tt=setTimeout(()=>t.className='',2800);}
 
@@ -932,21 +1436,32 @@ function showToast(msg,type=''){const t=document.getElementById('toast');t.textC
 //  INIT
 // ════════════════════════════════════
 (function init(){
-  const rp=getReturnPortal();
-  if(rp&&PORTALS[rp]&&!PORTALS[rp].soon)selectedPortal=rp;
-  if(rp&&PORTALS[rp])document.getElementById('screen-subtitle').textContent='Sign in to access '+PORTALS[rp].name+' — your progress syncs everywhere.';
+  if(REF_PORTAL&&PORTALS[REF_PORTAL]){
+    const _sst=document.getElementById('screen-subtitle');
+    if(_sst)_sst.textContent='Sign in to access '+PORTALS[REF_PORTAL].name+' — your progress syncs everywhere.';
+  }
   if(isLoggedIn()){
     renderReturning();
+    // Auto-redirect only if ref portal is set AND user is Google signed in
+    // Local-only logins always show portal selector first
+    if(REF_PORTAL&&PORTALS[REF_PORTAL]&&!PORTALS[REF_PORTAL].soon&&isGoogleSignedIn()){
+      setTimeout(()=>redirectAfterLogin(),1200);
+    }
     fbAuth.onAuthStateChanged(u=>{if(u&&!getGoogleUser()?.uid){localStorage.setItem('ts_google_user',JSON.stringify({name:u.displayName||'',email:u.email||'',picture:u.photoURL||'',uid:u.uid,provider:'google'}));}});
   } else {
-    document.getElementById('returning-banner').style.display='none';
-    document.getElementById('new-user-flow').style.display='block';
+    const _rb2=document.getElementById('returning-banner');if(_rb2)_rb2.style.display='none';
+    const _nuf2=document.getElementById('new-user-flow');if(_nuf2)_nuf2.style.display='block';
     fbAuth.onAuthStateChanged(u=>{
       if(u&&!isLoggedIn()){
         const gu={name:u.displayName||'',email:u.email||'',picture:u.photoURL||'',uid:u.uid,provider:'google'};
         localStorage.setItem('ts_google_user',JSON.stringify(gu));localStorage.setItem('cbtUserName',gu.name);
-        saveProfile('G-'+u.uid.substring(0,8).toUpperCase(),makeRegNo(),gu.name||'Student','Class 12',getReturnPortal());
-        setTimeout(()=>redirectAfterLogin(),400);
+        _pendingSid='G-'+u.uid.substring(0,8).toUpperCase();_pendingReg=makeRegNo();_pendingName=gu.name||'Student';_pendingCls='Class 12';
+        if(REF_PORTAL&&PORTALS[REF_PORTAL]&&!PORTALS[REF_PORTAL].soon){
+          saveProfile(_pendingSid,_pendingReg,_pendingName,_pendingCls,REF_PORTAL);
+          setTimeout(()=>redirectAfterLogin(),400);
+        } else {
+          goStep(1);
+        }
       }
     });
   }
