@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -162,6 +164,7 @@
     .card-back{transform:rotateY(180deg);background:rgba(255,255,255,.92);border:1px solid rgba(180,196,240,.7);box-shadow:0 12px 40px rgba(70,72,212,.13),0 2px 6px rgba(0,0,0,.06),inset 0 1px 0 rgba(255,255,255,.95);}
     .card-back::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#a855f7,#7c3aed,#4648d4);border-radius:20px 20px 0 0;}
     .card-back-content{padding:14px 16px;height:100%;display:flex;flex-direction:column;justify-content:space-between;gap:0;}
+    body.profile-ready .card-back-content{padding:18px 20px;gap:0;justify-content:space-between;}
     .card-stripe{height:3px;background:linear-gradient(90deg,#4648d4,#7c3aed,#a855f7,#7c3aed,#4648d4);margin:0 -16px;margin-bottom:10px;opacity:.4;}
     .back-fields{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:0;}
     .back-fields.three{grid-template-columns:1fr 1fr 1fr;}
@@ -341,9 +344,11 @@
     body.profile-ready .hero-left{display:none!important;}
     body.profile-ready #topnav-allset{display:flex!important;}
     body.profile-ready .portal-grid-full{display:grid!important;}
-    body.profile-ready #tab-content-profile,
-    body.profile-ready #tab-content-portal{display:block;}
-    body.profile-ready #tab-content-portal{display:none;}
+    body.profile-ready #tab-content-profile{display:block;}
+    /* Portal section always visible below profile */
+    body.profile-ready #tab-content-portal{display:block!important;}
+    /* Hide the tab bar — not needed when both sections always visible */
+    body.profile-ready .tab-bar{display:none!important;}
 
     /* ── Main layout ── */
     body.profile-ready .page-wrap{
@@ -551,7 +556,28 @@
     body.profile-ready .bottom-nav-item.active{color:#E8C97A;}
     body.profile-ready .bottom-nav-item.active .material-symbols-outlined{color:#E8C97A;font-variation-settings:'FILL' 1,'wght' 700;}
 
-    /* ── CTA button — gold ── */
+    /* ── Portal grid cards — Royal Silk dark theme ── */
+    body.profile-ready .pf-card{
+      background:rgba(10,21,64,.8);
+      border:1.5px solid rgba(201,151,58,.2);
+      color:#E8C97A;
+    }
+    body.profile-ready .pf-card:hover:not(.soon-card){
+      background:rgba(201,151,58,.1);
+      border-color:rgba(201,151,58,.5);
+      box-shadow:0 4px 16px rgba(201,151,58,.15);
+    }
+    body.profile-ready .pf-card.is-default{
+      border-color:#C9973A;
+      background:rgba(201,151,58,.12);
+      box-shadow:0 0 0 3px rgba(201,151,58,.15);
+    }
+    body.profile-ready .pf-card-name{color:#E8C97A;}
+    body.profile-ready .pf-card-sub{color:rgba(232,201,122,.4);}
+    body.profile-ready .pf-default-dot{background:#C9973A;box-shadow:0 0 0 2px rgba(201,151,58,.25);}
+
+    /* ── Bottom padding when portal section shows ── */
+    body.profile-ready .page-wrap{padding-bottom:120px;}
     body.profile-ready .btn-glow{
       width:100%;height:52px;border-radius:26px;
       background:linear-gradient(135deg,#C9973A,#E8C97A);
@@ -563,19 +589,31 @@
     body.profile-ready .btn-glow:hover{box-shadow:0 14px 36px rgba(201,151,58,.55);}
     body.profile-ready .btn-glow .material-symbols-outlined{font-size:18px!important;}
 
-    /* ── Mobile: stack vertically ── */
+    /* ── Desktop: smaller stat boxes ── */
+    @media(min-width:641px){
+      body.profile-ready #tab-content-profile{
+        grid-template-columns:130px 1fr;
+        gap:14px;
+      }
+      .stat-card-item{padding:14px 10px 12px;border-radius:14px;}
+      .stat-card-icon{width:38px;height:38px;font-size:20px;margin-bottom:2px;border-radius:10px;}
+      .stat-card-label{font-size:9px;}
+      .stat-card-value{font-size:28px;}
+      .stat-card-bar{margin-top:2px;}
+    }
+
+    /* ── Mobile: stack vertically, hide stats panel ── */
     @media(max-width:640px){
+      /* Hide "Profile Verified / You're All Set" in topnav on mobile — it overlaps */
+      #topnav-allset{display:none!important;}
+
       body.profile-ready #tab-content-profile{
         grid-template-columns:1fr;
       }
+      /* Hide the left stats panel entirely on mobile */
       body.profile-ready #stats-panel-left{
-        flex-direction:row!important;
-        gap:10px;
+        display:none!important;
       }
-      .stat-card-item{flex:1;padding:16px 10px 14px;align-items:center;text-align:center;}
-      .stat-card-icon{width:44px;height:44px;font-size:22px;margin-bottom:4px;}
-      .stat-card-value{font-size:30px;}
-      .stat-card-bar{display:none;}
       body.profile-ready .card-scene{height:260px;}
       body.profile-ready .id-card{height:260px;}
     }
@@ -611,7 +649,7 @@
     <a href="https://commercesehoga.github.io/dashboard" target="_blank" class="topnav-link">DASHBOARD</a>
   </div>
   <!-- Center: Profile Verified + You're All Set (shown when logged in) — Royal Silk theme -->
-  <div id="topnav-allset" style="display:none;position:absolute;left:50%;transform:translateX(-50%);display:none;flex-direction:column;align-items:center;gap:2px;pointer-events:none;">
+  <div id="topnav-allset" style="display:none;position:absolute;left:50%;transform:translateX(-50%);flex-direction:column;align-items:center;gap:2px;pointer-events:none;">
     <div style="display:inline-flex;align-items:center;gap:5px;background:rgba(201,151,58,.18);border:1px solid rgba(201,151,58,.55);color:#8B6420;border-radius:999px;padding:3px 12px;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;">
       <span class="material-symbols-outlined" style="font-size:12px;font-variation-settings:'FILL' 1;color:#C9973A;">verified</span>
       Profile Verified
@@ -763,7 +801,7 @@
             <!-- ── PROFILE TAB ── -->
             <div id="tab-content-profile">
               <div class="local-done-notice" id="local-done-notice" style="display:none;">
-                <div class="local-done-check">✅</div>
+                <div class="local-done-check"><svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
                 <div class="local-done-text"><b>Local Login Complete</b>Profile saved. Link Google to sync across devices.</div>
               </div>
 
@@ -772,26 +810,26 @@
                 <div style="flex:1;min-width:0;">
                   <div class="profile-name" id="profile-banner-name">Student</div>
                   <div class="profile-meta" id="profile-banner-meta">Loading…</div>
-                  <div class="profile-badge" id="profile-badge">✓ Profile Active</div>
+                  <div class="profile-badge" id="profile-badge"><svg width="9" height="9" viewBox="0 0 24 24" fill="#059669" style="vertical-align:middle;margin-right:2px;"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Profile Active</div>
                 </div>
               </div>
 
               <!-- ── Stats Panel (left column) ── -->
               <div id="stats-panel-left">
                 <div class="stat-card-item">
-                  <div class="stat-card-icon hp">❤️</div>
+                  <div class="stat-card-icon hp"><svg width="26" height="26" viewBox="0 0 24 24" fill="#f87171"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
                   <div class="stat-card-label">HP</div>
                   <div class="stat-card-value hp" id="spl-hp">0</div>
                   <div class="stat-card-bar"><div class="stat-card-bar-fill" id="spl-hp-bar" style="width:0%"></div></div>
                   <div style="font-size:10px;color:#94a3b8;margin-top:2px;" id="spl-hp-sub">0 / 100</div>
                 </div>
                 <div class="stat-card-item">
-                  <div class="stat-card-icon xp">⭐</div>
+                  <div class="stat-card-icon xp"><svg width="26" height="26" viewBox="0 0 24 24" fill="#E8C97A"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></div>
                   <div class="stat-card-label">XP</div>
                   <div class="stat-card-value xp" id="spl-xp">0</div>
                 </div>
                 <div class="stat-card-item">
-                  <div class="stat-card-icon rp">🏆</div>
+                  <div class="stat-card-icon rp"><svg width="26" height="26" viewBox="0 0 24 24" fill="#93c5fd"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/></svg></div>
                   <div class="stat-card-label">RP</div>
                   <div class="stat-card-value rp" id="spl-rp">0</div>
                 </div>
@@ -828,33 +866,66 @@
                           <div class="chip-cell"></div><div class="chip-cell"></div><div class="chip-cell"></div>
                           <div class="chip-cell"></div><div class="chip-cell"></div><div class="chip-cell"></div>
                         </div>
-                        <div class="card-verified">✓ Verified</div>
+                        <div class="card-verified"><svg width="9" height="9" viewBox="0 0 24 24" fill="#059669" style="vertical-align:middle;margin-right:2px;"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Verified</div>
                         <div class="card-year" id="card-year">2026</div>
                       </div>
                     </div>
                   </div>
                   <div class="card-face card-back">
-                    <div class="card-back-content">
-                      <div>
+                    <div class="card-back-content" style="padding:14px 16px;display:flex;flex-direction:column;gap:8px;justify-content:space-between;">
+                      <div style="display:flex;flex-direction:column;gap:8px;">
                         <div class="card-stripe"></div>
-                        <div class="back-fields" style="margin-bottom:7px;">
-                          <div class="back-field"><div class="back-field-label">Exam Portal</div><div class="back-field-val" id="card-exam">—</div></div>
-                          <div class="back-field"><div class="back-field-label">Rank</div><div class="back-field-val gold" id="card-rank">—</div></div>
+
+                        <!-- Hero row: Exam Portal (big) + Gender & Class -->
+                        <div style="background:rgba(201,151,58,.08);border:1px solid rgba(201,151,58,.25);border-radius:10px;padding:10px 13px;display:flex;align-items:center;justify-content:space-between;">
+                          <div>
+                            <div style="font-size:7px;text-transform:uppercase;letter-spacing:.9px;color:rgba(232,201,122,.45);margin-bottom:3px;">Exam Portal</div>
+                            <div style="font-family:'Outfit',sans-serif;font-size:16px;font-weight:900;color:#E8C97A;letter-spacing:-.3px;" id="card-exam">—</div>
+                          </div>
+                          <div style="text-align:right;display:flex;flex-direction:column;gap:5px;">
+                            <div>
+                              <div style="font-size:7px;text-transform:uppercase;letter-spacing:.9px;color:rgba(232,201,122,.45);margin-bottom:2px;">Gender</div>
+                              <div style="font-family:'DM Mono',monospace;font-size:11px;color:#E8C97A;font-weight:700;" id="card-gender">—</div>
+                            </div>
+                            <div>
+                              <div style="font-size:7px;text-transform:uppercase;letter-spacing:.9px;color:rgba(232,201,122,.45);margin-bottom:2px;">Class</div>
+                              <div style="font-family:'DM Mono',monospace;font-size:11px;color:#E8C97A;font-weight:700;" id="card-class-back">—</div>
+                            </div>
+                          </div>
                         </div>
-                        <div class="back-fields three">
-                          <div class="back-field"><div class="back-field-label">❤️ HP</div><div class="back-field-val red" id="card-hp">0</div></div>
-                          <div class="back-field"><div class="back-field-label">⭐ XP</div><div class="back-field-val gold" id="card-xp">0</div></div>
-                          <div class="back-field"><div class="back-field-label">🏆 RP</div><div class="back-field-val green" id="card-rp">0</div></div>
+
+                        <!-- Stats row: HP XP RP — big centered numbers -->
+                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
+                          <div style="background:rgba(255,255,255,.04);border:1px solid rgba(201,151,58,.18);border-radius:9px;padding:9px 8px;text-align:center;">
+                            <div style="font-size:7px;text-transform:uppercase;letter-spacing:.9px;color:rgba(232,201,122,.45);display:flex;align-items:center;justify-content:center;gap:3px;margin-bottom:4px;">
+                              <svg width="8" height="8" viewBox="0 0 24 24" fill="#f87171"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>HP
+                            </div>
+                            <div style="font-family:'Outfit',sans-serif;font-size:20px;font-weight:900;color:#f87171;line-height:1;" id="card-hp">0</div>
+                          </div>
+                          <div style="background:rgba(255,255,255,.04);border:1px solid rgba(201,151,58,.18);border-radius:9px;padding:9px 8px;text-align:center;">
+                            <div style="font-size:7px;text-transform:uppercase;letter-spacing:.9px;color:rgba(232,201,122,.45);display:flex;align-items:center;justify-content:center;gap:3px;margin-bottom:4px;">
+                              <svg width="8" height="8" viewBox="0 0 24 24" fill="#E8C97A"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>XP
+                            </div>
+                            <div style="font-family:'Outfit',sans-serif;font-size:20px;font-weight:900;color:#E8C97A;line-height:1;" id="card-xp">0</div>
+                          </div>
+                          <div style="background:rgba(255,255,255,.04);border:1px solid rgba(201,151,58,.18);border-radius:9px;padding:9px 8px;text-align:center;">
+                            <div style="font-size:7px;text-transform:uppercase;letter-spacing:.9px;color:rgba(232,201,122,.45);display:flex;align-items:center;justify-content:center;gap:3px;margin-bottom:4px;">
+                              <svg width="8" height="8" viewBox="0 0 24 24" fill="#6ee7b7"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/></svg>RP
+                            </div>
+                            <div style="font-family:'Outfit',sans-serif;font-size:20px;font-weight:900;color:#6ee7b7;line-height:1;" id="card-rp">0</div>
+                          </div>
                         </div>
                       </div>
-                      <div class="card-qr-row">
-                        <div class="card-qr-info">
+
+                      <!-- QR footer bar -->
+                      <div style="display:flex;align-items:center;gap:10px;background:rgba(201,151,58,.06);border:1px solid rgba(201,151,58,.18);border-radius:10px;padding:10px 12px;">
+                        <div class="card-qr-img" id="card-qr-img" style="width:52px;height:52px;flex-shrink:0;">
+                          <canvas id="card-qr-canvas"></canvas>
+                        </div>
+                        <div style="flex:1;">
                           <div class="card-qr-label">Scan to open portal</div>
                           <div class="card-qr-url" id="card-qr-url">thunderstudy.app</div>
-                          <div style="font-size:7px;color:rgba(70,72,212,.3);margin-top:4px;font-family:var(--mono);" id="card-joined-back">Joined —</div>
-                        </div>
-                        <div class="card-qr-img" id="card-qr-img">
-                          <canvas id="card-qr-canvas"></canvas>
+                          <div style="font-size:7px;color:rgba(232,201,122,.25);margin-top:3px;font-family:var(--mono);" id="card-joined-back">Joined —</div>
                         </div>
                       </div>
                     </div>
@@ -884,9 +955,13 @@
 
             <!-- ── PORTAL TAB ── -->
             <div id="tab-content-portal" style="display:none;">
-              <div class="portal-section-label" style="display:flex;align-items:center;justify-content:space-between;margin-top:4px;">
-                <span>📚 Study Portals</span>
-                <span style="font-size:9px;color:var(--on-surface-v);font-weight:600;text-transform:none;letter-spacing:0;">Tap to start or set default</span>
+              <div style="display:flex;align-items:center;gap:10px;margin:20px 0 12px;">
+                <div style="flex:1;height:1px;background:rgba(201,151,58,.25);"></div>
+                <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.9px;color:rgba(232,201,122,.6);display:flex;align-items:center;gap:5px;">
+                  <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 1;color:#C9973A;">school</span>
+                  Study Portals
+                </div>
+                <div style="flex:1;height:1px;background:rgba(201,151,58,.25);"></div>
               </div>
               <div class="portal-grid-full" id="returning-portal-grid"></div>
 
@@ -1053,11 +1128,35 @@ function getHP(){try{return JSON.parse(localStorage.getItem(TS_KEYS.HP)||'{"tota
 function getXP(){try{return JSON.parse(localStorage.getItem(TS_KEYS.XP_BONUS)||'0');}catch{return 0;}}
 function getRP(){try{return JSON.parse(localStorage.getItem(TS_KEYS.RP_DATA)||'{"rp":0}').rp||0;}catch{return 0;}}
 function getGender(){return localStorage.getItem(TS_KEYS.GENDER)||getProfile().gender||'';}
-function isLoggedIn(){return !!(getSID()&&getRegNo()&&getName());}
+function isLoggedIn(){return !!(getSID()&&getRegNo()&&getName()&&getGender());}
+function isProfileComplete(){return !!(getSID()&&getRegNo()&&getName()&&getGender()&&getProfile().class);}
 function getGoogleUser(){try{return JSON.parse(localStorage.getItem('ts_google_user')||'null');}catch{return null;}}
 function isGoogleSignedIn(){const g=getGoogleUser();return !!(g&&g.uid);}
 function makeSID(){const ts=Date.now().toString(36).toUpperCase().slice(-4);return 'TS-'+ts+Math.floor(100+Math.random()*900);}
 function makeRegNo(){const y=new Date().getFullYear(),l=String.fromCharCode(65+Math.floor(Math.random()*26));return 'REG-'+y+'-'+l+Math.floor(1000+Math.random()*9000);}
+
+function grantWelcomeBonus(){
+  // Only grant once — check flag
+  if(localStorage.getItem('ts_welcome_bonus_granted')==='1')return;
+  // HP: stored as {total:N}
+  try{
+    const hp=JSON.parse(localStorage.getItem(TS_KEYS.HP)||'{"total":0}');
+    hp.total=(hp.total||0)+10;
+    localStorage.setItem(TS_KEYS.HP,JSON.stringify(hp));
+  }catch{localStorage.setItem(TS_KEYS.HP,JSON.stringify({total:10}));}
+  // XP: stored as plain number
+  try{
+    const xp=JSON.parse(localStorage.getItem(TS_KEYS.XP_BONUS)||'0');
+    localStorage.setItem(TS_KEYS.XP_BONUS,JSON.stringify((xp||0)+5));
+  }catch{localStorage.setItem(TS_KEYS.XP_BONUS,'5');}
+  // RP: stored as {rp:N}
+  try{
+    const rpObj=JSON.parse(localStorage.getItem(TS_KEYS.RP_DATA)||'{"rp":0}');
+    rpObj.rp=(rpObj.rp||0)+5;
+    localStorage.setItem(TS_KEYS.RP_DATA,JSON.stringify(rpObj));
+  }catch{localStorage.setItem(TS_KEYS.RP_DATA,JSON.stringify({rp:5}));}
+  localStorage.setItem('ts_welcome_bonus_granted','1');
+}
 
 function saveProfile(sid,regNo,name,cls,exam){
   const gender=localStorage.getItem(TS_KEYS.GENDER)||'';
@@ -1067,6 +1166,7 @@ function saveProfile(sid,regNo,name,cls,exam){
   localStorage.setItem(TS_KEYS.NAME,name);localStorage.setItem(TS_KEYS.LEGACY_NAME,name);
   localStorage.setItem(TS_KEYS.LEGACY_SID,sid);localStorage.setItem(TS_KEYS.LEGACY_SNAME,name);
   [TS_KEYS.OB_DONE,TS_KEYS.SSC_OB_DONE,TS_KEYS.TSB_OB_DONE,TS_KEYS.JN_OB_DONE].forEach(k=>localStorage.setItem(k,'1'));
+  grantWelcomeBonus();
 }
 
 // ════════════════════════════════════
@@ -1298,6 +1398,12 @@ function buildIDCard(){
   document.getElementById('card-exam').textContent=portalName;
   document.getElementById('card-portal-badge').textContent=portalName;
 
+  // Back — Gender & Class
+  const _genderEl=document.getElementById('card-gender');
+  if(_genderEl){const _g=gender;_genderEl.textContent=_g==='boy'?'Male':_g==='girl'?'Female':'—';}
+  const _classBackEl=document.getElementById('card-class-back');
+  if(_classBackEl)_classBackEl.textContent=prof.class||'—';
+
   // Back — HP, XP, RP, Rank
   document.getElementById('card-hp').textContent=getHP();
   document.getElementById('card-xp').textContent=getXP();
@@ -1509,9 +1615,10 @@ if(_btnFinish)_btnFinish.onclick=()=>{
   if(!_pendingSid||!_pendingReg||!_pendingName){showToast('Missing info — please start again','error');goStep(0);return;}
   const portalToSave=REF_PORTAL&&PORTALS[REF_PORTAL]&&!PORTALS[REF_PORTAL].soon?REF_PORTAL:selectedPortal;
   saveProfile(_pendingSid,_pendingReg,_pendingName,_pendingCls,portalToSave);
-  showToast('✅ Profile created!','success');
+  showToast('Profile created!','success');
+  setTimeout(()=>showToast('Welcome bonus: +10 HP  +5 XP  +5 RP','success'),1200);
   renderReturning();goStep(0);
-  setTimeout(()=>redirectAfterLogin(),2200);
+  setTimeout(()=>redirectAfterLogin(),3200);
 };
 
 const _btnEnter=document.getElementById('btn-enter-returning');if(_btnEnter)_btnEnter.onclick=()=>redirectAfterLogin();
@@ -1690,14 +1797,19 @@ function showToast(msg,type=''){
   if(isLoggedIn()){
     renderReturning();
     // Auto-redirect only if ref portal is set AND user is Google signed in
-    // Local-only logins always show portal selector first
     if(REF_PORTAL&&PORTALS[REF_PORTAL]&&!PORTALS[REF_PORTAL].soon&&isGoogleSignedIn()){
       setTimeout(()=>redirectAfterLogin(),1200);
     }
     fbAuth.onAuthStateChanged(u=>{if(u&&!getGoogleUser()?.uid){localStorage.setItem('ts_google_user',JSON.stringify({name:u.displayName||'',email:u.email||'',picture:u.photoURL||'',uid:u.uid,provider:'google'}));}});
   } else {
+    // Profile incomplete — clear any partial state and show new-user flow
     const _rb2=document.getElementById('returning-banner');if(_rb2)_rb2.style.display='none';
     const _nuf2=document.getElementById('new-user-flow');if(_nuf2)_nuf2.style.display='block';
+    // Pre-fill SID/Reg if they exist (partial profile)
+    const _existSid=getSID();const _existReg=getRegNo();const _existName=getName();
+    if(_existSid){const el=document.getElementById('form-sid');if(el)el.value=_existSid;}
+    if(_existReg){const el=document.getElementById('form-regno');if(el)el.value=_existReg;}
+    if(_existName){const el=document.getElementById('form-name');if(el)el.value=_existName;}
     fbAuth.onAuthStateChanged(u=>{
       if(u&&!isLoggedIn()){
         const gu={name:u.displayName||'',email:u.email||'',picture:u.photoURL||'',uid:u.uid,provider:'google'};
@@ -1705,7 +1817,8 @@ function showToast(msg,type=''){
         _pendingSid='G-'+u.uid.substring(0,8).toUpperCase();_pendingReg=makeRegNo();_pendingName=gu.name||'Student';_pendingCls='Class 12';
         if(REF_PORTAL&&PORTALS[REF_PORTAL]&&!PORTALS[REF_PORTAL].soon){
           saveProfile(_pendingSid,_pendingReg,_pendingName,_pendingCls,REF_PORTAL);
-          setTimeout(()=>redirectAfterLogin(),400);
+          setTimeout(()=>showToast('Welcome bonus: +10 HP  +5 XP  +5 RP','success'),600);
+          setTimeout(()=>redirectAfterLogin(),1800);
         } else {
           goStep(1);
         }
